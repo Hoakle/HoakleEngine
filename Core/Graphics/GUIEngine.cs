@@ -1,11 +1,9 @@
-using HoakleEngine.Core;
 using HoakleEngine.Core.Communication;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.EventSystems;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace HoakleEngine.Graphics
+namespace HoakleEngine.Core.Graphics
 {
     public abstract class GUIEngine : Engine
     {

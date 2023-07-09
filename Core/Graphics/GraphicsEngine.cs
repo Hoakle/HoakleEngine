@@ -1,6 +1,4 @@
 using HoakleEngine.Core.Communication;
-using HoakleEngine.Graphics;
-using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -18,7 +16,6 @@ namespace HoakleEngine.Core.Graphics
 
         public void Init(EventSystem eventSystem)
         {
-            AddressableAssetSettings.BuildPlayerContent();
             base.Init();
         }
 

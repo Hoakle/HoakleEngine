@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HoakleEngine.Graphics
+namespace HoakleEngine.Core.Graphics
 {
     public interface IUserInterface
     {
