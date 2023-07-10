@@ -11,8 +11,8 @@ namespace HoakleEngine.Core
             _EventBus = eventBus;
         }
 
-        public virtual void Init() {}
+        public abstract void Init();
 
-        public virtual void Update() {}
+        public abstract void Update();
     }
 }

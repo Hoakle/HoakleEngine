@@ -7,16 +7,16 @@ namespace HoakleEngine.Core.Graphics
 {
     public abstract class GraphicsEngine : Engine
     {
-        private readonly GUIEngine GuiEngine;
+        protected GUIEngine GuiEngine;
         
         public GraphicsEngine(EventBus eventBus) : base(eventBus)
         {
             
         }
 
-        public void Init(EventSystem eventSystem)
+        public void Init(EventSystem eventSystem, Camera camera)
         {
-            base.Init();
+            GuiEngine.Init(camera);
         }
 
         public override void Update()
