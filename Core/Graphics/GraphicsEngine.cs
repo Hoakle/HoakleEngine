@@ -17,17 +17,21 @@ namespace HoakleEngine.Core.Graphics
         public void Init(EventSystem eventSystem, Camera camera)
         {
             GuiEngine.Init(camera);
+            SubscribesGenericEngineEvent();
         }
 
         public override void Update()
         {
-            
+            GuiEngine.Update();
         }
-        
-        public AsyncOperation LoadScene(int index)
+
+        private void SubscribesGenericEngineEvent()
         {
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(index);
-            return asyncLoad;
+            _EventBus.Subscribe<LoadSceneEvent>(LoadScene);
+        }
+        public void LoadScene(LoadSceneEvent loadSceneEvent)
+        {
+            SceneManager.LoadSceneAsync(loadSceneEvent.SceneIndex);
         }
     }
 }

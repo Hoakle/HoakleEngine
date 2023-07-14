@@ -1,3 +1,4 @@
+using HoakleEngine.Core.Communication;
 using UnityEngine;
 
 namespace HoakleEngine.Core.Graphics
@@ -12,10 +13,12 @@ namespace HoakleEngine.Core.Graphics
         public GameObject GetFirstSelected { get; }
 
         protected GUIEngine _GuiEngine;
+        protected EventBus _EventBus;
         
-        public void LinkEngine(GUIEngine guiEngine)
+        public void LinkEngine(GUIEngine guiEngine, EventBus bus)
         {
             _GuiEngine = guiEngine;
+            _EventBus = bus;
         }
 
         protected void Destroy()
@@ -24,16 +27,16 @@ namespace HoakleEngine.Core.Graphics
         }
     }
 
-    public abstract class ObjectRepresentation<TData> : GraphicalUserInterface
+    public abstract class ObjectRepresentation : GraphicalUserInterface
     {
-        protected TData _Data;
+        protected Object _Data;
 
-        public void SetData(TData data)
+        public void SetData(Object data)
         {
             _Data = data;
         }
 
-        public TData GetData()
+        public Object GetData()
         {
             return _Data;
         }
