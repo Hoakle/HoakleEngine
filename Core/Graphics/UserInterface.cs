@@ -13,32 +13,15 @@ namespace HoakleEngine.Core.Graphics
         public GameObject GetFirstSelected { get; }
 
         protected GUIEngine _GuiEngine;
-        protected EventBus _EventBus;
         
-        public void LinkEngine(GUIEngine guiEngine, EventBus bus)
+        public void LinkEngine(GUIEngine guiEngine)
         {
             _GuiEngine = guiEngine;
-            _EventBus = bus;
         }
 
         protected void Destroy()
         {
             Destroy(gameObject);
-        }
-    }
-
-    public abstract class ObjectRepresentation : GraphicalUserInterface
-    {
-        protected Object _Data;
-
-        public void SetData(Object data)
-        {
-            _Data = data;
-        }
-
-        public Object GetData()
-        {
-            return _Data;
         }
     }
 }

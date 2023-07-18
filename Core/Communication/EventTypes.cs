@@ -5,11 +5,6 @@ using UnityEngine;
 
 namespace HoakleEngine.Core.Communication
 {
-    public class EventTypes
-    {
-        
-    }
-
     public class GUICreationEvent
     {
         public string GUIName;
@@ -17,16 +12,6 @@ namespace HoakleEngine.Core.Communication
         public GUICreationEvent(string name)
         {
             GUIName = name;
-        }
-    }
-
-    public class DataGUICreationEvent : GUICreationEvent
-    {
-        public Object Data;
-        
-        public DataGUICreationEvent(string name, Object data) : base(name)
-        {
-            Data = data;
         }
     }
 

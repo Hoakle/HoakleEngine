@@ -13,8 +13,6 @@ namespace HoakleEngine
         protected GameEngine GameEngine;
         protected GraphicsEngine GraphicsEngine;
 
-        protected EventBus EventBus;
-        
         private void Awake()
         {
             DontDestroyOnLoad(this);

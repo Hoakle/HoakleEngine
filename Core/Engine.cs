@@ -4,11 +4,9 @@ namespace HoakleEngine.Core
 {
     public abstract class Engine
     {
-        protected EventBus _EventBus;
-
-        public Engine(EventBus eventBus)
+        public Engine()
         {
-            _EventBus = eventBus;
+            
         }
 
         public abstract void Init();

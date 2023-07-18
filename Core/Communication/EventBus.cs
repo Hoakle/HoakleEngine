@@ -5,6 +5,15 @@ namespace HoakleEngine.Core.Communication
 {
     public class EventBus
     {
+        private static EventBus _Instance;
+        public static EventBus Instance
+        {
+            get
+            {
+                _Instance ??= new EventBus();
+                return _Instance;
+            }
+        }
         private Dictionary<Type, List<Action<object>>> eventSubscriptions = new Dictionary<Type, List<Action<object>>>();
         
         public void Subscribe<T>(Action<T> handler) where T : class

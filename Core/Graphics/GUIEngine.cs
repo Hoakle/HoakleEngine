@@ -9,7 +9,7 @@ namespace HoakleEngine.Core.Graphics
     {
         private Camera Camera;
         
-        public GUIEngine(EventBus eventBus) : base(eventBus)
+        public GUIEngine() : base()
         {
         
         }
@@ -22,26 +22,12 @@ namespace HoakleEngine.Core.Graphics
 
         private void SubscribesGenericEngineEvent()
         {
-            _EventBus.Subscribe<GUICreationEvent>(CreateGUI);
-            _EventBus.Subscribe<DataGUICreationEvent>(CreateGUI);
+            EventBus.Instance.Subscribe<GUICreationEvent>(CreateGUI);
         }
         
         public void CreateGUI(GUICreationEvent guiCreationEvent)
         {
             Addressables.InstantiateAsync(guiCreationEvent.GUIName).Completed += InitGUI;
-        }
-        
-        public void CreateGUI(DataGUICreationEvent guiCreationEvent)
-        {
-            Addressables.InstantiateAsync(guiCreationEvent.GUIName).Completed += (prefab) =>
-            {
-                InitGUI(prefab);
-                if (prefab.Result is { } gameObject)
-                {
-                    if(gameObject.GetComponent<ObjectRepresentation>() is { } objectRepresentation)
-                        objectRepresentation.SetData(guiCreationEvent.Data);
-                }
-            };
         }
 
         private void InitGUI(AsyncOperationHandle<GameObject> prefab)
@@ -56,7 +42,7 @@ namespace HoakleEngine.Core.Graphics
                 
                 if(gameObject.GetComponent<GraphicalUserInterface>() is { } gui)
                 {
-                    gui.LinkEngine(this, _EventBus);
+                    gui.LinkEngine(this);
                 }
             }
         }

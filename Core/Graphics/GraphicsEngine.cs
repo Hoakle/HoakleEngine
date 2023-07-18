@@ -9,7 +9,7 @@ namespace HoakleEngine.Core.Graphics
     {
         protected GUIEngine GuiEngine;
         
-        public GraphicsEngine(EventBus eventBus) : base(eventBus)
+        public GraphicsEngine() : base()
         {
             
         }
@@ -27,7 +27,7 @@ namespace HoakleEngine.Core.Graphics
 
         private void SubscribesGenericEngineEvent()
         {
-            _EventBus.Subscribe<LoadSceneEvent>(LoadScene);
+            EventBus.Instance.Subscribe<LoadSceneEvent>(LoadScene);
         }
         public void LoadScene(LoadSceneEvent loadSceneEvent)
         {
