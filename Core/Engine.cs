@@ -4,9 +4,10 @@ namespace HoakleEngine.Core
 {
     public abstract class Engine
     {
-        public Engine()
+        protected GameRoot _GameRoot;
+        public Engine(GameRoot gameRoot)
         {
-            
+            _GameRoot = gameRoot;
         }
 
         public abstract void Init();

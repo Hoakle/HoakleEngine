@@ -5,7 +5,7 @@ namespace HoakleEngine.Core.Game
 {
     public abstract class GameEngine : Engine
     {
-        public GameEngine() : base()
+        public GameEngine(GameRoot gameRoot) : base(gameRoot)
         {
         
         }

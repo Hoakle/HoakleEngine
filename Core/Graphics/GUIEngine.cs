@@ -9,7 +9,7 @@ namespace HoakleEngine.Core.Graphics
     {
         private Camera Camera;
         
-        public GUIEngine() : base()
+        public GUIEngine(GameRoot gameRoot) : base(gameRoot)
         {
         
         }
