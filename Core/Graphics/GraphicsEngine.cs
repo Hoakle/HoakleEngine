@@ -1,4 +1,5 @@
-using HoakleEngine.Core.Communication;
+using System;
+using TreeEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.EventSystems;
@@ -8,14 +9,15 @@ namespace HoakleEngine.Core.Graphics
 {
     public abstract class GraphicsEngine : Engine
     {
-        protected GUIEngine GuiEngine;
+        public GUIEngine GuiEngine;
         
         public GraphicsEngine(GameRoot gameRoot) : base(gameRoot)
         {
             
         }
 
-        public void Init(EventSystem eventSystem, Camera camera)
+        public override void Init() { }
+        public virtual void Init(EventSystem eventSystem, Camera camera)
         {
             GuiEngine.Init(camera);
             SubscribesGenericEngineEvent();
@@ -28,17 +30,16 @@ namespace HoakleEngine.Core.Graphics
 
         private void SubscribesGenericEngineEvent()
         {
-            EventBus.Instance.Subscribe<LoadSceneEvent>(LoadScene);
-            EventBus.Instance.Subscribe<CreateGraphicalRepresentationEvent>(CreateGraphicalRepresentation);
+
         }
-        private void LoadScene(LoadSceneEvent loadSceneEvent)
+        public void LoadScene(int sceneIndex)
         {
-            SceneManager.LoadSceneAsync(loadSceneEvent.SceneIndex);
+            SceneManager.LoadSceneAsync(sceneIndex);
         }
 
-        private void CreateGraphicalRepresentation(CreateGraphicalRepresentationEvent creationEvent)
+        public void CreateGraphicalRepresentation(string key, Transform parent, Action<GameObject> OnInstanciated)
         {
-            Addressables.InstantiateAsync(creationEvent.Key, creationEvent.Parent).Completed += (handle) => creationEvent.OnInstanciated?.Invoke(handle.Result);
+            Addressables.InstantiateAsync(key, parent).Completed += (handle) => OnInstanciated?.Invoke(handle.Result);
         }
     }
 }

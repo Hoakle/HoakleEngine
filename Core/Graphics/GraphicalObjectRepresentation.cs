@@ -1,11 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace HoakleEngine.Core.Graphics
 {
-    public interface GraphicalObjectRepresentation<TData>
+    public interface GraphicalObjectRepresentation<DataHandler>
     {
-        public TData Data { get; set; }
+        public DataHandler Data { get; set; }
     }
 }

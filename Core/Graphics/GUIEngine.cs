@@ -1,4 +1,5 @@
-using HoakleEngine.Core.Communication;
+using System;
+using HoakleEngine.Core.Game;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -17,34 +18,73 @@ namespace HoakleEngine.Core.Graphics
         public void Init(Camera camera)
         {
             Camera = camera;
-            SubscribesGenericEngineEvent();
         }
 
-        private void SubscribesGenericEngineEvent()
+        public void CreateGUI<T>(string key, Action<T> onInstantiated = null) where T : GraphicalUserInterface
         {
-            EventBus.Instance.Subscribe<GUICreationEvent>(CreateGUI);
+            Addressables.InstantiateAsync(key).Completed += (asyncOperation) =>
+            {
+                onInstantiated?.Invoke(InitGUI<T>(asyncOperation));
+            };
         }
         
-        public void CreateGUI(GUICreationEvent guiCreationEvent)
+        public void CreateGUI<T>(string key, Transform parent, Action<T> onInstantiated = null) where T : GraphicalUserInterface
         {
-            Addressables.InstantiateAsync(guiCreationEvent.GUIName).Completed += InitGUI;
+            Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
+            {
+                onInstantiated?.Invoke(InitGUI<T>(asyncOperation));
+            };
+        }
+        
+        public void CreateDataGUI<T, TData>(string key, TData data, Transform parent, Action<T> onInstantiated = null) where T : DataGUI<TData>
+        {
+            Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
+            {
+                onInstantiated?.Invoke(InitDataGUI<T, TData>(asyncOperation, data));
+            };
+        }
+        
+        public void CreateDataGUI<T, TData>(string key, TData data, Action<T> onInstantiated = null) where T : DataGUI<TData>
+        {
+            Addressables.InstantiateAsync(key).Completed += (asyncOperation) =>
+            {
+                onInstantiated?.Invoke(InitDataGUI<T, TData>(asyncOperation, data));
+            };
         }
 
-        private void InitGUI(AsyncOperationHandle<GameObject> prefab)
+        private T InitDataGUI<T, TData>(AsyncOperationHandle<GameObject> asyncOperation, TData data) where T : DataGUI<TData>
         {
-            if (prefab.Result is { } gameObject)
+            InitGUI<T>(asyncOperation);
+            if (asyncOperation.Result is { } gameObject)
             {
-                if(gameObject.GetComponent<Canvas>() is { } canvas)
+                if(gameObject.GetComponent<T>() is { } dataGui)
                 {
-                    canvas.worldCamera = Camera;
-                    canvas.planeDistance = 0.5f;
-                }
-                
-                if(gameObject.GetComponent<GraphicalUserInterface>() is { } gui)
-                {
-                    gui.LinkEngine(this);
+                    dataGui.Data = data;
+                    return dataGui;
                 }
             }
+
+            return null;
+        }
+
+        private T InitGUI<T>(AsyncOperationHandle<GameObject> asyncOperation) where T : GraphicalUserInterface
+        {
+            if (asyncOperation.Result is { } gameObject)
+            {
+                if(gameObject.GetComponent<T>() is { } gui)
+                {
+                    gui.LinkEngine(this);
+                    gui.Canvas.worldCamera = Camera;
+                    gui.Canvas.planeDistance = 0.5f;
+                    return gui;
+                }
+            }
+            else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+            {
+                Debug.LogError(asyncOperation.OperationException);
+            }
+            
+            return null;
         }
     }
 }

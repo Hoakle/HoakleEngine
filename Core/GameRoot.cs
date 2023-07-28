@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using HoakleEngine.Core.Communication;
 using HoakleEngine.Core.Game;
 using HoakleEngine.Core.Graphics;
 using UnityEngine;
@@ -33,9 +31,10 @@ namespace HoakleEngine
         
         #region GraphicsEngine
 
-        [SerializeField] protected EventSystem m_EventSystem = null;
+        [SerializeField] protected EventSystem _EventSystem = null;
 
-        [SerializeField] protected Camera m_Camera;
+        [SerializeField] protected Camera _Camera;
+        public Camera Camera => _Camera;
 
         #endregion
     }

@@ -1,7 +1,14 @@
+using System.Collections.Generic;
+
 namespace HoakleEngine.Core.Game
 {
-    public class DataHandler<TData> where TData : Data
+    public abstract class DataHandler
     {
-        
+        protected GameEngine _GameEngine;
+
+        public DataHandler(GameEngine parent)
+        {
+            _GameEngine = parent;
+        }
     }
 }
