@@ -10,6 +10,9 @@ namespace HoakleEngine
     {
         protected GameEngine GameEngine;
         protected GraphicsEngine GraphicsEngine;
+        
+        [SerializeField] private ConfigContainer _ConfigContainer;
+        public ConfigContainer ConfigContainer => _ConfigContainer;
 
         private void Awake()
         {

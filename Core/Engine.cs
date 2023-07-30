@@ -5,6 +5,8 @@ namespace HoakleEngine.Core
     public abstract class Engine
     {
         protected GameRoot _GameRoot;
+        public ConfigContainer ConfigContainer => _GameRoot.ConfigContainer;
+        
         protected List<Engine> _LinkedEngines;
         protected List<IUpdateable> _UpdateableList;
         public Engine(GameRoot gameRoot)
