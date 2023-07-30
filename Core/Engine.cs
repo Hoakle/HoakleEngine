@@ -6,15 +6,23 @@ namespace HoakleEngine.Core
     {
         protected GameRoot _GameRoot;
         protected List<Engine> _LinkedEngines;
+        protected List<IUpdateable> _UpdateableList;
         public Engine(GameRoot gameRoot)
         {
             _GameRoot = gameRoot;
             _LinkedEngines = new List<Engine>();
+            _UpdateableList = new List<IUpdateable>();
         }
 
         public abstract void Init();
 
-        public abstract void Update();
+        public virtual void Update()
+        {
+            foreach (var updateable in _UpdateableList)
+            {
+                updateable.Update();
+            }
+        }
 
         public void LinkEngine(Engine engine)
         {

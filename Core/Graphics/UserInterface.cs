@@ -27,8 +27,28 @@ namespace HoakleEngine.Core.Graphics
         }
     }
 
-    public abstract class DataGUI<DataHandler> : GraphicalUserInterface, GraphicalObjectRepresentation<DataHandler>
+    public abstract class DataGUI<TData> : GraphicalUserInterface
     {
-        public DataHandler Data { get; set; }
+        public TData Data { get; set; }
+    }
+
+    public abstract class GuiComponent : MonoBehaviour
+    {
+        protected GUIEngine _GuiEngine;
+        
+        public void LinkEngine(GUIEngine guiEngine)
+        {
+            _GuiEngine = guiEngine;
+        }
+
+        protected void Destroy()
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public abstract class DataGuiComponent<TData> : GuiComponent
+    {
+        public TData Data { get; set; }
     }
 }

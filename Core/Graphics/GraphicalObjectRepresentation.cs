@@ -1,7 +1,17 @@
+using UnityEngine;
+
 namespace HoakleEngine.Core.Graphics
 {
-    public interface GraphicalObjectRepresentation<DataHandler>
+    public abstract class GraphicalObjectRepresentation<TData> : MonoBehaviour
     {
-        public DataHandler Data { get; set; }
+        protected GraphicsEngine _GraphicsEngine;
+        public TData Data { get; set; }
+
+        public Transform Parent;
+        
+        public void LinkEngine(GraphicsEngine graphicsEngine)
+        {
+            _GraphicsEngine = graphicsEngine;
+        }
     }
 }
