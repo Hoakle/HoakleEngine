@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using HoakleEngine.Core.Config;
+using HoakleEngine.Core.Game;
 
 namespace HoakleEngine.Core
 {
@@ -6,6 +8,7 @@ namespace HoakleEngine.Core
     {
         protected GameRoot _GameRoot;
         public ConfigContainer ConfigContainer => _GameRoot.ConfigContainer;
+        public GameSaveContainer GameSave => _GameRoot.GameSaveContainer;
         
         protected List<Engine> _LinkedEngines;
         protected List<IUpdateable> _UpdateableList;

@@ -1,4 +1,5 @@
 using System.Collections;
+using HoakleEngine.Core.Config;
 using HoakleEngine.Core.Game;
 using HoakleEngine.Core.Graphics;
 using UnityEngine;
@@ -10,9 +11,13 @@ namespace HoakleEngine
     {
         protected GameEngine GameEngine;
         protected GraphicsEngine GraphicsEngine;
-        
-        [SerializeField] private ConfigContainer _ConfigContainer;
+
+        [SerializeField] private GraphicsPool _GraphicsPool = null;
+        [SerializeField] private ConfigContainer _ConfigContainer = null;
+        [SerializeField] private GameSaveContainer _GameSaveContainer = null;
+        public GraphicsPool GraphicsPool => _GraphicsPool;
         public ConfigContainer ConfigContainer => _ConfigContainer;
+        public GameSaveContainer GameSaveContainer => _GameSaveContainer;
 
         private void Awake()
         {
@@ -20,7 +25,10 @@ namespace HoakleEngine
             Init();
         }
 
-        protected abstract void Init();
+        protected virtual void Init()
+        {
+            _GameSaveContainer.LoadSaves();
+        }
         
         public Coroutine StartEngineCoroutine(IEnumerator routine)
         {

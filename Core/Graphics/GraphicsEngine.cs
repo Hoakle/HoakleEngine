@@ -35,31 +35,48 @@ namespace HoakleEngine.Core.Graphics
 
         public void CreateGraphicalRepresentation<T, TData>(string key, TData data, Transform parent = null, Action<T> OnInstanciated = null) where T : GraphicalObjectRepresentation<TData>
         {
-            Addressables.InstantiateAsync(key, parent).Completed += (handle) =>
+            var gameObject = _GameRoot.GraphicsPool.GetGraphics<T>();
+            if (gameObject != null)
             {
-                T gor = InitGraphicalRepresentation<T, TData>(handle, data, parent);
+                T gor = InitGraphicalRepresentation<T, TData>(gameObject, data, parent);
                 OnInstanciated?.Invoke(gor);
-            };
+            }
+            else
+            {
+                Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
+                {
+                    if (asyncOperation.Result is { } gameObject)
+                    {
+                        T gor = InitGraphicalRepresentation<T, TData>(gameObject, data, parent);
+                        OnInstanciated?.Invoke(gor);
+                    }
+                    else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                    {
+                        Debug.LogError(asyncOperation.OperationException);
+                    }
+                };
+            }
+            
         }
 
-        private T InitGraphicalRepresentation<T, TData>(AsyncOperationHandle<GameObject> asyncOperation, TData data, Transform parent = null) where T : GraphicalObjectRepresentation<TData>
+        private T InitGraphicalRepresentation<T, TData>(GameObject gameObject, TData data, Transform parent = null) where T : GraphicalObjectRepresentation<TData>
         {
-            if (asyncOperation.Result is { } gameObject)
+            if(gameObject.GetComponent<T>() is { } objectRepresentation)
             {
-                if(gameObject.GetComponent<T>() is { } objectRepresentation)
-                {
-                    objectRepresentation.Data = data;
-                    objectRepresentation.LinkEngine(this);
-                    objectRepresentation.Parent = parent;
-                    return objectRepresentation;
-                }
-            }
-            else if (asyncOperation.Status == AsyncOperationStatus.Failed)
-            {
-                Debug.LogError(asyncOperation.OperationException);
+                objectRepresentation.Data = data;
+                objectRepresentation.LinkEngine(this);
+                objectRepresentation.gameObject.transform.parent = parent;
+                objectRepresentation.OnReady();
+                objectRepresentation.gameObject.SetActive(true);
+                return objectRepresentation;
             }
             
             return null;
+        }
+
+        public void Dispose(Type type, GameObject gameObject)
+        {
+            _GameRoot.GraphicsPool.AddToPool(type, gameObject);
         }
     }
 }

@@ -92,6 +92,7 @@ namespace HoakleEngine.Core.Graphics
             if (dataGui is { })
             {
                 dataGui.Data = data;
+                dataGui.OnReady();
                 return dataGui;
             }
 
@@ -107,6 +108,7 @@ namespace HoakleEngine.Core.Graphics
                     gui.LinkEngine(this);
                     gui.Canvas.worldCamera = Camera;
                     gui.Canvas.planeDistance = 0.5f;
+                    gui.OnReady();
                     return gui;
                 }
             }

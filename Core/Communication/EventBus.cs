@@ -63,9 +63,9 @@ namespace HoakleEngine.Core.Communication
         {
             if (eventSubscriptions.ContainsKey(eventType))
             {
-                foreach (var handler in eventSubscriptions[eventType])
+                for (int i = eventSubscriptions[eventType].Count - 1; i >= 0; i--)
                 {
-                    if(handler is Action action)
+                    if(eventSubscriptions[eventType][i] is Action action)
                         action.Invoke();
                 }
             }
@@ -76,6 +76,8 @@ namespace HoakleEngine.Core.Communication
     {
         SpeedBonus,
         Coin,
-        SpeedBonusFadeOut
+        SpeedBonusFadeOut,
+        GameOver,
+        StartGame
     }
 }

@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Config
 {
     [CreateAssetMenu(fileName = "ConfigContainer", menuName = "Data/HoakleEngine/ConfigContainer")]
     public class ConfigContainer : ScriptableObject
