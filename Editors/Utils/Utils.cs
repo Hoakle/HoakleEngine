@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace HoakleEngine.Utils
+namespace HoakleEngine.Editors.Utils
 {
     public class Utils : MonoBehaviour
     {

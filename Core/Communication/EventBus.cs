@@ -78,6 +78,10 @@ namespace HoakleEngine.Core.Communication
         Coin,
         SpeedBonusFadeOut,
         GameOver,
-        StartGame
+        StartGame,
+        Magnet,
+        MagnetFadeOut,
+        Shield,
+        ShieldFadeOut,
     }
 }

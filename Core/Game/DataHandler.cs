@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace HoakleEngine.Core.Game
 {
-    public abstract class DataHandler
+    public abstract class GameDataHandler
     {
         protected GameEngine _GameEngine;
 
-        public DataHandler(GameEngine parent)
+        public GameDataHandler(GameEngine parent)
         {
             _GameEngine = parent;
         }

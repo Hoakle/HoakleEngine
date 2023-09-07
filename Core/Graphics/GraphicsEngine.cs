@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace HoakleEngine.Core.Graphics
 {
@@ -66,8 +67,8 @@ namespace HoakleEngine.Core.Graphics
                 objectRepresentation.Data = data;
                 objectRepresentation.LinkEngine(this);
                 objectRepresentation.gameObject.transform.parent = parent;
-                objectRepresentation.OnReady();
                 objectRepresentation.gameObject.SetActive(true);
+                objectRepresentation.OnReady();
                 return objectRepresentation;
             }
             
@@ -76,7 +77,8 @@ namespace HoakleEngine.Core.Graphics
 
         public void Dispose(Type type, GameObject gameObject)
         {
-            _GameRoot.GraphicsPool.AddToPool(type, gameObject);
+            if (!_GameRoot.GraphicsPool.AddToPool(type, gameObject))
+                Object.Destroy(gameObject);
         }
     }
 }

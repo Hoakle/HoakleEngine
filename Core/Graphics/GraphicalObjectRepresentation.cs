@@ -15,6 +15,9 @@ namespace HoakleEngine.Core.Graphics
         private List<GraphicalObjectRepresentation> _SubGORs = new List<GraphicalObjectRepresentation>();
 
         public Action<GraphicalObjectRepresentation> OnDispose;
+
+        protected bool _IsReady;
+
         public void LinkEngine(GraphicsEngine graphicsEngine)
         {
             _GraphicsEngine = graphicsEngine;
@@ -22,7 +25,7 @@ namespace HoakleEngine.Core.Graphics
 
         public virtual void OnReady()
         {
-            
+            _IsReady = true;
         }
         public virtual void Dispose()
         {
@@ -34,6 +37,12 @@ namespace HoakleEngine.Core.Graphics
                 _SubGORs.RemoveAt(0);
             }
             
+            OnDispose?.Invoke(this);
+
+            if (_GraphicsEngine == null)
+                return;
+
+            _IsReady = false;
             _GraphicsEngine.Dispose(type, gameObject);
         }
 

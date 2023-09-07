@@ -24,7 +24,7 @@ namespace HoakleEngine.Core.Graphics
             return null;
         }
 
-        public void AddToPool(Type type, GameObject gameObject)
+        public bool AddToPool(Type type, GameObject gameObject)
         {
             if (!_Pool.ContainsKey(type))
             {
@@ -34,6 +34,7 @@ namespace HoakleEngine.Core.Graphics
             _Pool[type].Add(gameObject);
 
             MoveAndResetObject(gameObject);
+            return true;
         }
 
         private void MoveAndResetObject(GameObject gameObject)
