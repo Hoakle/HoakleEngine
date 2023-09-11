@@ -17,6 +17,7 @@ namespace HoakleEngine.Core.Graphics
         public Action<GraphicalObjectRepresentation> OnDispose;
 
         protected bool _IsReady;
+        public bool IsReady => _IsReady;
 
         public void LinkEngine(GraphicsEngine graphicsEngine)
         {
