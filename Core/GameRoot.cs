@@ -28,6 +28,7 @@ namespace HoakleEngine
         protected virtual void Init()
         {
             _GameSaveContainer.LoadSaves();
+            _GameSaveContainer.Init();
         }
         
         public Coroutine StartEngineCoroutine(IEnumerator routine)

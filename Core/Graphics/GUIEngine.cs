@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using HoakleEngine.Core.Game;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -22,19 +23,38 @@ namespace HoakleEngine.Core.Graphics
 
         public void CreateGUI<T>(string key, Action<T> onInstantiated = null) where T : GraphicalUserInterface
         {
-            Addressables.InstantiateAsync(key).Completed += (asyncOperation) =>
+            var asyncOperation = Addressables.InstantiateAsync(key);
+            asyncOperation.Completed += (asyncOperation) =>
             {
-                T gui = InitGUI<T>(asyncOperation);
-                onInstantiated?.Invoke(gui);
+                if (asyncOperation.Result is { } gameObject)
+                {
+                    T gui = InitGUI<T>(gameObject);
+                    onInstantiated?.Invoke(gui);
+                }
+                else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                {
+                    Debug.LogError(asyncOperation.OperationException);
+                }
+                else
+                {
+                    Debug.LogError("Error: Addressables instantiation failed: Status = " + asyncOperation.Status);
+                }
             };
         }
-
+        
         public void CreateDataGUI<T, TData>(string key, TData data, Action<T> onInstantiated = null) where T : DataGUI<TData>
         {
             Addressables.InstantiateAsync(key).Completed += (asyncOperation) =>
             {
-                T gui = InitDataGUI<T, TData>(asyncOperation, data);
-                onInstantiated?.Invoke(gui);
+                if (asyncOperation.Result is { } gameObject)
+                {
+                    T gui = InitDataGUI<T, TData>(gameObject, data);
+                    onInstantiated?.Invoke(gui);
+                }
+                else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                {
+                    Debug.LogError(asyncOperation.OperationException);
+                }
             };
         }
 
@@ -42,8 +62,15 @@ namespace HoakleEngine.Core.Graphics
         {
             Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
             {
-                T gui = InitGUIComponent<T>(asyncOperation);
-                onInstantiated?.Invoke(gui);
+                if (asyncOperation.Result is { } gameObject)
+                {
+                    T gui = InitGUIComponent<T>(gameObject);
+                    onInstantiated?.Invoke(gui);
+                }
+                else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                {
+                    Debug.LogError(asyncOperation.OperationException);
+                }
             };
         }
         
@@ -51,14 +78,35 @@ namespace HoakleEngine.Core.Graphics
         {
             Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
             {
-                T gui = InitDataGUIComponent<T, TData>(asyncOperation, data);
-                onInstantiated?.Invoke(gui);
+                if (asyncOperation.Result is { } gameObject)
+                {
+                    T gui = InitDataGUIComponent<T, TData>(gameObject, data);
+                    onInstantiated?.Invoke(gui);
+                }
+                else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                {
+                    Debug.LogError(asyncOperation.OperationException);
+                }
+                
             };
         }
 
-        private T InitDataGUIComponent<T, TData>(AsyncOperationHandle<GameObject> asyncOperation, TData data) where T : DataGuiComponent<TData>
+        private T InitDataGUIComponent<T, TData>(GameObject gameObject, TData data) where T : DataGuiComponent<TData>
         {
-            T dataGui = InitGUIComponent<T>(asyncOperation);
+            T dataGui = InitGUIComponent<T>(gameObject);
+            if (dataGui is {})
+            {
+                dataGui.Data = data;
+                return dataGui;
+            }
+
+            return null;
+        }
+        
+            
+        public T InitDataGUIComponent<T, TData>(DataGuiComponent<TData> component, TData data) where T : DataGuiComponent<TData>
+        {
+            T dataGui = InitGUIComponent<T>(component.gameObject);
             if (dataGui is {})
             {
                 dataGui.Data = data;
@@ -68,27 +116,24 @@ namespace HoakleEngine.Core.Graphics
             return null;
         }
 
-        private T InitGUIComponent<T>(AsyncOperationHandle<GameObject> asyncOperation) where T : GuiComponent
+        private T InitGUIComponent<T>(GameObject gameObject) where T : GuiComponent
         {
-            if (asyncOperation.Result is { } gameObject)
-            {
                 if(gameObject.GetComponent<T>() is { } gui)
                 {
                     gui.LinkEngine(this);
                     return gui;
                 }
-            }
-            else if (asyncOperation.Status == AsyncOperationStatus.Failed)
-            {
-                Debug.LogError(asyncOperation.OperationException);
-            }
-            
-            return null;
+                else
+                {
+                    Debug.LogError(gameObject.name + " is not " + typeof(T));
+                }
+
+                return null;
         }
 
-        private T InitDataGUI<T, TData>(AsyncOperationHandle<GameObject> asyncOperation, TData data) where T : DataGUI<TData>
+        private T InitDataGUI<T, TData>(GameObject gameObject, TData data) where T : DataGUI<TData>
         {
-            T dataGui = InitGUI<T>(asyncOperation);
+            T dataGui = InitGUI<T>(gameObject);
             if (dataGui is { })
             {
                 dataGui.Data = data;
@@ -99,22 +144,19 @@ namespace HoakleEngine.Core.Graphics
             return null;
         }
 
-        private T InitGUI<T>(AsyncOperationHandle<GameObject> asyncOperation) where T : GraphicalUserInterface
+        private T InitGUI<T>(GameObject gameObject) where T : GraphicalUserInterface
         {
-            if (asyncOperation.Result is { } gameObject)
+            if(gameObject.GetComponent<T>() is { } gui)
             {
-                if(gameObject.GetComponent<T>() is { } gui)
-                {
-                    gui.LinkEngine(this);
-                    gui.Canvas.worldCamera = Camera;
-                    gui.Canvas.planeDistance = 0.5f;
-                    gui.OnReady();
-                    return gui;
-                }
+                gui.LinkEngine(this);
+                gui.Canvas.worldCamera = Camera;
+                gui.Canvas.planeDistance = 0.5f;
+                gui.OnReady();
+                return gui;
             }
-            else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+            else
             {
-                Debug.LogError(asyncOperation.OperationException);
+                Debug.LogError(gameObject.name + " is not " + typeof(T));
             }
             
             return null;

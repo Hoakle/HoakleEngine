@@ -37,5 +37,13 @@ namespace HoakleEngine.Core.Game
                 PlayerPrefs.SetString(save.SaveName, JsonUtility.ToJson(save));
             }
         }
+
+        public void Init()
+        {
+            foreach (var save in _Saves)
+            {
+                save.Init();
+            }
+        }
     }
 }
