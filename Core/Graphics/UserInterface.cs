@@ -50,6 +50,11 @@ namespace HoakleEngine.Core.Graphics
         {
             Destroy(gameObject);
         }
+        
+        public virtual void OnReady()
+        {
+            
+        }
     }
 
     public abstract class DataGuiComponent<TData> : GuiComponent

@@ -1,6 +1,9 @@
+using System;
+
 namespace HoakleEngine.Core.Game
 {
-    public class EngineData
+    [Serializable]
+    public class GameSaveData
     {
         
     }

@@ -29,6 +29,7 @@ namespace HoakleEngine.Core.Graphics
                 if (asyncOperation.Result is { } gameObject)
                 {
                     T gui = InitGUI<T>(gameObject);
+                    gui.OnReady();
                     onInstantiated?.Invoke(gui);
                 }
                 else if (asyncOperation.Status == AsyncOperationStatus.Failed)
@@ -65,6 +66,7 @@ namespace HoakleEngine.Core.Graphics
                 if (asyncOperation.Result is { } gameObject)
                 {
                     T gui = InitGUIComponent<T>(gameObject);
+                    gui.OnReady();
                     onInstantiated?.Invoke(gui);
                 }
                 else if (asyncOperation.Status == AsyncOperationStatus.Failed)
@@ -97,6 +99,7 @@ namespace HoakleEngine.Core.Graphics
             if (dataGui is {})
             {
                 dataGui.Data = data;
+                dataGui.OnReady();
                 return dataGui;
             }
 
@@ -110,6 +113,7 @@ namespace HoakleEngine.Core.Graphics
             if (dataGui is {})
             {
                 dataGui.Data = data;
+                dataGui.OnReady();
                 return dataGui;
             }
 
@@ -151,7 +155,6 @@ namespace HoakleEngine.Core.Graphics
                 gui.LinkEngine(this);
                 gui.Canvas.worldCamera = Camera;
                 gui.Canvas.planeDistance = 0.5f;
-                gui.OnReady();
                 return gui;
             }
             else
