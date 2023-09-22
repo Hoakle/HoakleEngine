@@ -5,7 +5,7 @@ using HoakleEngine.Core.Graphics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core
 {
     public abstract class GameRoot : MonoBehaviour
     {
@@ -14,11 +14,15 @@ namespace HoakleEngine
 
         [SerializeField] private GraphicsPool _GraphicsPool = null;
         [SerializeField] private ConfigContainer _ConfigContainer = null;
-        [SerializeField] private GameSaveContainer _GameSaveContainer = null;
+        [SerializeField] private AudioList _AudioList = null;
+        [SerializeField] private Transform _AudioPlayer = null;
         public GraphicsPool GraphicsPool => _GraphicsPool;
         public ConfigContainer ConfigContainer => _ConfigContainer;
-        public GameSaveContainer GameSaveContainer => _GameSaveContainer;
+        public GameSaveContainer GameSaveContainer;
 
+        public ServicesContainer ServicesContainer;
+
+        protected bool _IsPaused;
         private void Awake()
         {
             DontDestroyOnLoad(this);
@@ -27,8 +31,30 @@ namespace HoakleEngine
 
         protected virtual void Init()
         {
-            _GameSaveContainer.LoadSaves();
-            _GameSaveContainer.Init();
+            InitGameSave(new GameSaveContainer());
+            ServicesContainer = new ServicesContainer();
+            ServicesContainer.Init();
+            
+            AudioPlayer.Instance.Init(GameSaveContainer.GetSave<SettingsGameSave>(), _AudioList, _AudioPlayer);
+        }
+
+        protected virtual void InitGameSave(GameSaveContainer container)
+        {
+            container.SetSave(new SettingsGameSave());
+            
+            GameSaveContainer = container;
+            GameSaveContainer.LoadSaves();
+            GameSaveContainer.Init();
+        }
+        
+        void OnApplicationFocus(bool hasFocus)
+        {
+            _IsPaused = !hasFocus;
+        }
+
+        void OnApplicationPause(bool pauseStatus)
+        {
+            _IsPaused = pauseStatus;
         }
         
         public Coroutine StartEngineCoroutine(IEnumerator routine)

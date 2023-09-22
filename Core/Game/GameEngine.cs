@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using HoakleEngine.Core.Audio;
 
 namespace HoakleEngine.Core.Game
 {
@@ -12,12 +13,12 @@ namespace HoakleEngine.Core.Game
 
         public override void Init()
         {
-            
+            _UpdateableList.Add(AudioPlayer.Instance);
         }
 
-        public override void Update()
+        public override void Update(bool isPaused)
         {
-            
+            base.Update(isPaused);
         }
     }
 }

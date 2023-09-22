@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HoakleEngine.Core.Config;
 using HoakleEngine.Core.Game;
+using HoakleEngine.Core.Services;
 
 namespace HoakleEngine.Core
 {
@@ -9,6 +10,7 @@ namespace HoakleEngine.Core
         protected GameRoot _GameRoot;
         public ConfigContainer ConfigContainer => _GameRoot.ConfigContainer;
         public GameSaveContainer GameSave => _GameRoot.GameSaveContainer;
+        public ServicesContainer ServicesContainer => _GameRoot.ServicesContainer;
         
         protected List<Engine> _LinkedEngines;
         protected List<IUpdateable> _UpdateableList;
@@ -21,11 +23,11 @@ namespace HoakleEngine.Core
 
         public abstract void Init();
 
-        public virtual void Update()
+        public virtual void Update(bool isPaused)
         {
             foreach (var updateable in _UpdateableList)
             {
-                updateable.Update();
+                updateable.Update(isPaused);
             }
         }
 

@@ -21,8 +21,9 @@ namespace HoakleEngine.Core.Graphics
             _GuiEngine = guiEngine;
         }
 
-        protected void Destroy()
+        protected virtual void Dispose()
         {
+            _GuiEngine.Dispose(this);
             Destroy(gameObject);
         }
 

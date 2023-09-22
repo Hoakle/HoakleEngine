@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using HoakleEngine.Core.Game;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -9,16 +10,17 @@ namespace HoakleEngine.Core.Graphics
 {
     public abstract class GUIEngine : Engine
     {
-        private Camera Camera;
-        
+        private Camera _Camera;
+        public Camera Camera => _Camera;
+        private List<Canvas> _SortedCanvas;
         public GUIEngine(GameRoot gameRoot) : base(gameRoot)
         {
-        
+            _SortedCanvas = new List<Canvas>();
         }
 
         public void Init(Camera camera)
         {
-            Camera = camera;
+            _Camera = camera;
         }
 
         public void CreateGUI<T>(string key, Action<T> onInstantiated = null) where T : GraphicalUserInterface
@@ -89,7 +91,6 @@ namespace HoakleEngine.Core.Graphics
                 {
                     Debug.LogError(asyncOperation.OperationException);
                 }
-                
             };
         }
 
@@ -134,6 +135,22 @@ namespace HoakleEngine.Core.Graphics
 
                 return null;
         }
+        
+        public T InitGUIComponent<T>(GuiComponent gameObject) where T : GuiComponent
+        {
+            if(gameObject.GetComponent<T>() is { } gui)
+            {
+                gui.LinkEngine(this);
+                gameObject.OnReady();
+                return gui;
+            }
+            else
+            {
+                Debug.LogError(gameObject.name + " is not " + typeof(T));
+            }
+
+            return null;
+        }
 
         private T InitDataGUI<T, TData>(GameObject gameObject, TData data) where T : DataGUI<TData>
         {
@@ -154,7 +171,9 @@ namespace HoakleEngine.Core.Graphics
             {
                 gui.LinkEngine(this);
                 gui.Canvas.worldCamera = Camera;
-                gui.Canvas.planeDistance = 0.5f;
+                gui.Canvas.planeDistance = 1f;
+                _SortedCanvas.Add(gui.Canvas);
+                ApplySorting();
                 return gui;
             }
             else
@@ -163,6 +182,19 @@ namespace HoakleEngine.Core.Graphics
             }
             
             return null;
+        }
+
+        private void ApplySorting()
+        {
+            for(int i = 0; i < _SortedCanvas.Count; i++)
+            {
+                _SortedCanvas[i].sortingOrder = i;
+            }
+        }
+        public void Dispose(GraphicalUserInterface graphicalUserInterface)
+        {
+            _SortedCanvas.Remove(graphicalUserInterface.Canvas);
+            ApplySorting();
         }
     }
 }

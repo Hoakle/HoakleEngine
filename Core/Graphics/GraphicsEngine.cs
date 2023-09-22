@@ -10,7 +10,18 @@ namespace HoakleEngine.Core.Graphics
     public abstract class GraphicsEngine : Engine
     {
         public GUIEngine GuiEngine;
-        public CameraControl CameraControl;
+
+        public Action OnCameraControlChange;
+        private CameraControl _CameraControl;
+        public CameraControl CameraControl
+        {
+            get => _CameraControl;
+            set
+            {
+                _CameraControl = value;
+                OnCameraControlChange?.Invoke();
+            }
+        }
         public GraphicsEngine(GameRoot gameRoot) : base(gameRoot)
         {
             
@@ -23,15 +34,15 @@ namespace HoakleEngine.Core.Graphics
             GuiEngine.LinkEngine(this);
         }
 
-        public override void Update()
+        public override void Update(bool isPaused)
         {
-            GuiEngine.Update();
-            base.Update();
+            GuiEngine.Update(isPaused);
+            base.Update(isPaused);
         }
         
         public void LoadScene(int sceneIndex)
         {
-            SceneManager.LoadSceneAsync(sceneIndex);
+            SceneManager.LoadScene(sceneIndex);
         }
 
         public void CreateGraphicalRepresentation<T, TData>(string key, TData data, Transform parent = null, Action<T> OnInstanciated = null) where T : GraphicalObjectRepresentation<TData>
@@ -59,12 +70,52 @@ namespace HoakleEngine.Core.Graphics
             }
             
         }
+        
+        public void CreateGraphicalRepresentation<T>(string key, Transform parent = null, Action<T> OnInstanciated = null) where T : GraphicalObjectRepresentation
+        {
+            var gameObject = _GameRoot.GraphicsPool.GetGraphics<T>();
+            if (gameObject != null)
+            {
+                T gor = InitGraphicalRepresentation<T>(gameObject, parent);
+                OnInstanciated?.Invoke(gor);
+            }
+            else
+            {
+                Addressables.InstantiateAsync(key, parent).Completed += (asyncOperation) =>
+                {
+                    if (asyncOperation.Result is { } gameObject)
+                    {
+                        T gor = InitGraphicalRepresentation<T>(gameObject, parent);
+                        OnInstanciated?.Invoke(gor);
+                    }
+                    else if (asyncOperation.Status == AsyncOperationStatus.Failed)
+                    {
+                        Debug.LogError(asyncOperation.OperationException);
+                    }
+                };
+            }
+            
+        }
 
         private T InitGraphicalRepresentation<T, TData>(GameObject gameObject, TData data, Transform parent = null) where T : GraphicalObjectRepresentation<TData>
         {
             if(gameObject.GetComponent<T>() is { } objectRepresentation)
             {
                 objectRepresentation.Data = data;
+                objectRepresentation.LinkEngine(this);
+                objectRepresentation.gameObject.transform.parent = parent;
+                objectRepresentation.gameObject.SetActive(true);
+                objectRepresentation.OnReady();
+                return objectRepresentation;
+            }
+            
+            return null;
+        }
+        
+        private T InitGraphicalRepresentation<T>(GameObject gameObject, Transform parent = null) where T : GraphicalObjectRepresentation
+        {
+            if(gameObject.GetComponent<T>() is { } objectRepresentation)
+            {
                 objectRepresentation.LinkEngine(this);
                 objectRepresentation.gameObject.transform.parent = parent;
                 objectRepresentation.gameObject.SetActive(true);

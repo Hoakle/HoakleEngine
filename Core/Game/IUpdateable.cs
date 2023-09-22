@@ -2,6 +2,6 @@ namespace HoakleEngine
 {
     public interface IUpdateable
     {
-        public void Update();
+        public void Update(bool hasFocus);
     }
 }

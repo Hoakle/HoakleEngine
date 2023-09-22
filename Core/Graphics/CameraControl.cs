@@ -7,6 +7,7 @@ namespace HoakleEngine.Core.Graphics
     {
         protected List<Transform> _Targets; // All the targets the camera needs to encompass.
         protected Camera _Camera;
+        public Camera Camera => _Camera;
         protected CameraControl (Camera camera)
         {
             _Camera = camera;
@@ -23,7 +24,12 @@ namespace HoakleEngine.Core.Graphics
             _Targets.Remove(target);
         }
 
-        public void Update()
+        public virtual void RemoveAllTarget()
+        {
+            _Targets.Clear();
+        }
+
+        public void Update(bool isPaused)
         {
             if (_Targets.Count == 0)
                 return;

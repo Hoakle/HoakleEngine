@@ -17,7 +17,7 @@ namespace HoakleEngine.Core.Communication
         }
         private Dictionary<EngineEventType, List<Delegate>> eventSubscriptions = new Dictionary<EngineEventType, List<Delegate>>();
         
-        public void Subscribe<T>(EngineEventType eventType, Action<T> handler) where T : class
+        public void Subscribe<T>(EngineEventType eventType, Action<T> handler)
         {
             if (!eventSubscriptions.ContainsKey(eventType))
             {
@@ -37,7 +37,7 @@ namespace HoakleEngine.Core.Communication
             eventSubscriptions[eventType].Add(handler);
         }
         
-        public void UnSubscribe<T>(EngineEventType eventType, Action<T> handler) where T : class
+        public void UnSubscribe<T>(EngineEventType eventType, Action<T> handler)
         {
             eventSubscriptions[eventType].Remove(handler);
         }
@@ -47,7 +47,7 @@ namespace HoakleEngine.Core.Communication
             eventSubscriptions[eventType].Remove(handler);
         }
         
-        public void Publish<T>(EngineEventType eventType, T eventData) where T : class
+        public void Publish<T>(EngineEventType eventType, T eventData)
         {
             if (eventSubscriptions.ContainsKey(eventType))
             {
@@ -83,5 +83,7 @@ namespace HoakleEngine.Core.Communication
         MagnetFadeOut,
         Shield,
         ShieldFadeOut,
+        MoveSideway,
+        BackToMenu
     }
 }
