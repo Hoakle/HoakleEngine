@@ -4,13 +4,16 @@ using UnityEngine;
 
 namespace HoakleEngine.Core.Game
 {
-    [CreateAssetMenu(fileName = "GameSaveContainer", menuName = "Data/HoakleEngine/GameSaveContainer")]
-    public class GameSaveContainer : ScriptableObject
+    public class GameSaveContainer
     {
         [SerializeField] private List<GameSave> _Saves = new List<GameSave>();
 
         private Dictionary<Type, GameSave> _SaveCache = new Dictionary<Type, GameSave>();
-        
+
+        public void SetSave<T>(T gameSave) where T : GameSave
+        {
+            _Saves.Add(gameSave);
+        }
         public T GetSave<T>() where T : GameSave
         {
             Type type = typeof(T);
