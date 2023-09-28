@@ -84,6 +84,11 @@ namespace HoakleEngine.Core.Communication
         Shield,
         ShieldFadeOut,
         MoveSideway,
-        BackToMenu
+        BackToMenu,
+        StartBoost,
+        Lazer,
+        CoinFactorStarted,
+        ShieldFadeOutWarning,
+        PlayerDied
     }
 }

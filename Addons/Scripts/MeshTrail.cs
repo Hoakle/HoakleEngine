@@ -15,7 +15,8 @@ namespace HoakleEngine.Addons
         [SerializeField] private float _MeshRefreshRate = 0.2f;
         [SerializeField] private float _MeshDestroyDelay = 2f;
 
-        public float Speed;
+        [HideInInspector] public float Speed;
+        
         private bool _IsActive;
         private float _LastActivationTime;
 
