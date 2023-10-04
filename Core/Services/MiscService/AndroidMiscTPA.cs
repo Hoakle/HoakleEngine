@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -5,12 +6,14 @@ namespace HoakleEngine.Core.Services.MiscService
 {
     public class AndroidMiscTPA : MiscThirdPartyActor
     {
-        public override void Init()
+        public Action<ActorError> OnError { get; set; }
+
+        public void Init()
         {
             
         }
 
-        public override void OpenEmail()
+        public void OpenEmail()
         {
             string email = "hoakle.twitch@gmail.com";
             string subject = MyEscapeURL("User Feedback");

@@ -139,6 +139,7 @@ namespace HoakleEngine.Core.Audio
         CoinCollect_02 = 3,
         Jump = 4,
         BonusCollect = 5,
+        GameOver = 6,
         
         //Music
         RainLoop = 100,

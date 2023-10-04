@@ -1,9 +1,17 @@
+using System;
 using UnityEngine;
 
 namespace HoakleEngine.Core.Services
 {
-    public abstract class ThirdPartyActor
+    public interface ThirdPartyActor
     {
-        public abstract void Init();
+        public Action<ActorError> OnError { get; set; }
+        public void Init();
+    }
+
+    public abstract class ActorError
+    {
+        public int Code;
+        public string Message;
     }
 }

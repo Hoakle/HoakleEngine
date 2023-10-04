@@ -12,6 +12,7 @@ namespace HoakleEngine.Core.Services
         public ServicesContainer()
         {
             _ServiceCache.Add(typeof(MiscThirdPartyService), new MiscThirdPartyService());
+            _ServiceCache.Add(typeof(PlayServicesTP), new PlayServicesTP());
         }
 
         public void Init()
