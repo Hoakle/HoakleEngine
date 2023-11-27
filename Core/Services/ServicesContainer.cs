@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using HoakleEngine.Core.Game;
+using HoakleEngine.Core.Services.AdsServices;
 using UnityEngine;
 
 namespace HoakleEngine.Core.Services
@@ -13,6 +14,7 @@ namespace HoakleEngine.Core.Services
         {
             _ServiceCache.Add(typeof(MiscThirdPartyService), new MiscThirdPartyService());
             _ServiceCache.Add(typeof(PlayServicesTP), new PlayServicesTP());
+            _ServiceCache.Add(typeof(AdsThirdPartyService), new AdsThirdPartyService());
         }
 
         public void Init()

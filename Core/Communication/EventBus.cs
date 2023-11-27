@@ -89,6 +89,9 @@ namespace HoakleEngine.Core.Communication
         Lazer,
         CoinFactorStarted,
         ShieldFadeOutWarning,
-        PlayerDied
+        PlayerDied,
+        Continue,
+        GameModeChange,
+        Win
     }
 }

@@ -26,7 +26,7 @@ namespace HoakleEngine.Core.Graphics
         protected virtual void Close()
         {
             if(_Animator != null)
-                _Animator.SetTrigger("Dispose");
+                _Animator.SetBool("Displayed", false);
             else
             {
                 Dispose();
@@ -47,7 +47,7 @@ namespace HoakleEngine.Core.Graphics
         {
             if (_Animator != null)
             {
-                _Animator.SetTrigger("Display");
+                _Animator.SetBool("Displayed", true);
                 AudioPlayer.Instance.Play(AudioKeys.Whoosh);
             }
                 
