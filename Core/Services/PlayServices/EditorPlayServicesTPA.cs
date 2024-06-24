@@ -87,9 +87,22 @@ namespace HoakleEngine.Core.Services.PlayServices
         {
             return new ScoreData(score.userID, score.rank, score.value);
         }
+        
         public void DisplayLeaderboards()
         {
             Debug.LogError("DisplayLeaderboards not implemented in editor");
+        }
+
+        public Action OnReviewInfoReady { get; set; }
+
+        public void PrepareReview()
+        {
+            OnReviewInfoReady?.Invoke();
+        }
+
+        public void LaunchReview()
+        {
+            
         }
     }
 }

@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Google.Play.Common;
+using Google.Play.Review;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine.SocialPlatforms;
-using UnityEngine.SocialPlatforms.Impl;
+using Range = UnityEngine.SocialPlatforms.Range;
 
 namespace HoakleEngine.Core.Services.PlayServices
 {
@@ -59,17 +62,54 @@ namespace HoakleEngine.Core.Services.PlayServices
 
         public void LoadScore(string key, bool isPlayerCentered)
         {
+            /*ILeaderboard lb = PlayGamesPlatform.Instance.CreateLeaderboard();
+            lb.id = key;
+            Range range;
+            range.count = 10;
+            range.from = isPlayerCentered ? -1 : 10;
+            lb.range = range;
+            lb.timeScope = TimeScope.AllTime;
+            lb.LoadScores(ok =>
+            {
+                if (ok) {
+                    string[] list = lb.scores.Append(lb.localUserScore).Select(p => p != null ? p.userID : "").ToArray();
+                    PlayGamesPlatform.Instance.LoadUsers(list, profiles =>
+                    {
+                        LeaderboardData data = new LeaderboardData(
+                            lb.title,
+                            GetDataFromIScore(lb.localUserScore, profiles.First(p => p.id == lb.localUserScore.userID)),
+                            lb.scores.ToList().Select(score => GetDataFromIScore(score, profiles.First(p => p.id == score.userID))).ToList());
+                            
+                        OnScoreLoaded?.Invoke(data);
+                    });
+                }
+                else {
+                    OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.LoadScoreError, (int) -1 , "Load score error"));
+                }
+            });*/
+            
             PlayGamesPlatform.Instance.LoadScores(key, isPlayerCentered ? LeaderboardStart.PlayerCentered : LeaderboardStart.TopScores, 10, LeaderboardCollection.Public, LeaderboardTimeSpan.AllTime,
                 scoreData =>
                 {
                     if(scoreData.Status == ResponseStatus.Success)
                     {
-                        LeaderboardData data = new LeaderboardData(
-                            scoreData.Title,
-                            GetDataFromIScore(scoreData.PlayerScore),
-                            scoreData.Scores.ToList().Select(GetDataFromIScore).ToList());
+                        if (scoreData.PlayerScore == null && isPlayerCentered)
+                        {
+                            OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.NoPlayerScore, -1,
+                                "No player score for this leaderboard"));
+                            return;
+                        }
                         
-                        OnScoreLoaded?.Invoke(data);
+                        string[] list = scoreData.Scores.Append(scoreData.PlayerScore).Select(p => p != null ? p.userID : "").ToArray();
+                        PlayGamesPlatform.Instance.LoadUsers(list, profiles =>
+                        {
+                            LeaderboardData data = new LeaderboardData(
+                                scoreData.Title,
+                                GetDataFromIScore(scoreData.PlayerScore, profiles.First(p => p.id == scoreData.PlayerScore.userID)),
+                                scoreData.Scores.ToList().Select(score => GetDataFromIScore(score, profiles.First(p => p.id == score.userID))).ToList());
+                            
+                            OnScoreLoaded?.Invoke(data);
+                        });
                     }
                     else
                     {
@@ -79,13 +119,43 @@ namespace HoakleEngine.Core.Services.PlayServices
                 });
         }
 
-        private ScoreData GetDataFromIScore(IScore score)
+        private ScoreData GetDataFromIScore(IScore score, IUserProfile profile)
         {
-            return new ScoreData(score.userID, score.rank, score.value);
+            if (score == null)
+                return new ScoreData("Unknown", 0, 0);
+            
+            return new ScoreData(profile.userName, score.rank, score.value);
         }
+        
         public void DisplayLeaderboards()
         {
             PlayGamesPlatform.Instance.ShowLeaderboardUI();
+        }
+
+        private ReviewManager _ReviewManager;
+        private PlayReviewInfo _PlayReviewInfo;
+        public Action OnReviewInfoReady { get; set; }
+        public async void PrepareReview()
+        {
+            _ReviewManager = new ReviewManager();
+            PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode> requestFlowOperation = await new Task<PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode>>(() => _ReviewManager.RequestReviewFlow());
+            if (requestFlowOperation.Error != ReviewErrorCode.NoError)
+            { 
+                OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) requestFlowOperation.Error , "Request Flow Operation Error: " + requestFlowOperation.Error));
+                return;
+            }
+            
+            _PlayReviewInfo = await new Task<PlayReviewInfo>(() => requestFlowOperation.GetResult());
+            OnReviewInfoReady?.Invoke();
+        }
+
+        public async void LaunchReview()
+        {
+            PlayAsyncOperation<VoidResult,ReviewErrorCode> launchFlowOperation = await new Task<PlayAsyncOperation<VoidResult, ReviewErrorCode>>(() => _ReviewManager.LaunchReviewFlow(_PlayReviewInfo));
+            if (launchFlowOperation.Error != ReviewErrorCode.NoError)
+            {
+                OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) launchFlowOperation.Error , "Launch Flow Operation Error: " + launchFlowOperation.Error));
+            }
         }
     }
 }

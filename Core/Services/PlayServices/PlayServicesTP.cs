@@ -1,18 +1,32 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using HoakleEngine.Core.Services;
 using HoakleEngine.Core.Services.PlayServices;
 using UnityEngine;
-using UnityEngine.SocialPlatforms;
 
 namespace HoakleEngine
 {
-    public class PlayServicesTP : ThirdPartyService
+    public interface IPlayServicesTP
+    {
+        public void SignIn();
+        public void ManualSignIn();
+        public void UnlockAchievement(string achievementKey);
+        public void DisplayAchievements();
+        public Action<LeaderboardData> OnScoreLoaded { get; set; }
+        public void UpdateScore(string leaderboardKey, long score);
+        public void LoadScore(string leaderboardKey, bool isPlayerCentered);
+        public void DisplayLeaderboards();
+        public Action<PlayServicesErrorType> OnPlayerServiceError { get; set; }
+        Action OnReviewInfoReady { get; set; }
+        void PrepareReview();
+        void LaunchReview();
+    }
+    
+    public class PlayServicesTP : ThirdPartyService, IPlayServicesTP
     {
         private IPlayServicesTPA _Actor;
-        public override void Init()
+        public override void Initialize()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             _Actor = new GooglePlayServicesTPA();
@@ -22,6 +36,7 @@ namespace HoakleEngine
 #endif
             _Actor.OnError += OnError;
             _Actor.OnScoreLoaded += (leaderboardData) => OnScoreLoaded?.Invoke(leaderboardData);
+            _Actor.OnReviewInfoReady += () => OnReviewInfoReady?.Invoke();
             _Actor.Init();
         }
         
@@ -56,6 +71,7 @@ namespace HoakleEngine
 #region Leaderboards
 
         public Action<LeaderboardData> OnScoreLoaded { get; set; }
+        public Action<PlayServicesErrorType> OnPlayerServiceError { get; set; }
 
         public void UpdateScore(string leaderboardKey, long score)
         {
@@ -73,10 +89,26 @@ namespace HoakleEngine
         }
         
 #endregion
+
+#region Review
+        public Action OnReviewInfoReady { get; set; }
+        public void PrepareReview()
+        {
+            _Actor.PrepareReview();
+        }
+
+        public void LaunchReview()
+        {
+            _Actor.LaunchReview();
+        }
+#endregion
         
 #region Error handling
         private void OnError(ActorError error)
         {
+            if (((PlayServicesError)error).Type == PlayServicesErrorType.NoPlayerScore)
+                OnPlayerServiceError?.Invoke(PlayServicesErrorType.NoPlayerScore);
+            
             StringBuilder str = new StringBuilder();
             str.Append("Play Services Error: " + ((PlayServicesError) error).Type);
             str.AppendLine("    - Code: " + error.Code);
@@ -86,7 +118,6 @@ namespace HoakleEngine
         }
         
 #endregion
-
     }
 
     public class PlayServicesError : ActorError
@@ -106,7 +137,9 @@ namespace HoakleEngine
         AuthenticationError = 0,
         UnlockAchievementError = 1,
         UpdateScoreError = 2,
-        LoadScoreError
+        LoadScoreError = 3,
+        NoPlayerScore = 4,
+        ReviewError
     }
 
     public class LeaderboardData

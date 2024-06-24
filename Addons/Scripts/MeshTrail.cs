@@ -38,7 +38,7 @@ namespace HoakleEngine.Addons
                     MeshRenderer mr = obj.AddComponent<MeshRenderer>();
                     MeshFilter mf = obj.AddComponent<MeshFilter>();
 
-                    obj.transform.SetPositionAndRotation(_CharacterTransform.position, _CharacterTransform.rotation);
+                    obj.transform.SetPositionAndRotation(skin.transform.position, skin.transform.rotation);
 
                     Mesh mesh = new Mesh();
                     skin.BakeMesh(mesh);

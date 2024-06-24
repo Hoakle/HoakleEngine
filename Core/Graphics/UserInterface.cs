@@ -1,5 +1,7 @@
+using UniRx;
 using HoakleEngine.Core.Audio;
 using UnityEngine;
+using Zenject;
 
 namespace HoakleEngine.Core.Graphics
 {
@@ -17,7 +19,26 @@ namespace HoakleEngine.Core.Graphics
         public GameObject GetFirstSelected { get; }
 
         protected GUIEngine _GuiEngine;
-        
+        private AudioPlayer _AudioPlayer;
+        private ICameraProvider _CameraProvider;
+
+        [Inject]
+        public void Inject(AudioPlayer audioPlayer, ICameraProvider cameraProvider)
+        {
+            _AudioPlayer = audioPlayer;
+            _CameraProvider = cameraProvider;
+            
+            _CameraProvider.Camera
+                .Subscribe(SetCanvasCamera);
+
+            SetCanvasCamera(_CameraProvider.Camera.Value);
+        }
+
+        private void SetCanvasCamera(Camera camera)
+        {
+            _Canvas.worldCamera = camera;
+        }
+
         public void LinkEngine(GUIEngine guiEngine)
         {
             _GuiEngine = guiEngine;
@@ -48,7 +69,7 @@ namespace HoakleEngine.Core.Graphics
             if (_Animator != null)
             {
                 _Animator.SetBool("Displayed", true);
-                AudioPlayer.Instance.Play(AudioKeys.Whoosh);
+                _AudioPlayer.Play(AudioKeys.Whoosh);
             }
                 
         }

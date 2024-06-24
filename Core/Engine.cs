@@ -2,22 +2,34 @@ using System.Collections.Generic;
 using HoakleEngine.Core.Config;
 using HoakleEngine.Core.Game;
 using HoakleEngine.Core.Services;
+using UnityEngine;
+using Zenject;
 
 namespace HoakleEngine.Core
 {
-    public abstract class Engine
+    public interface IEngine
+    {
+        public void Init();
+        public void Update(bool isPaused);
+        public void LinkEngine(IEngine engine);
+    }
+    
+    public abstract class Engine : IEngine
     {
         protected GameRoot _GameRoot;
-        public ConfigContainer ConfigContainer => _GameRoot.ConfigContainer;
-        public GameSaveContainer GameSave => _GameRoot.GameSaveContainer;
-        public ServicesContainer ServicesContainer => _GameRoot.ServicesContainer;
         
-        protected List<Engine> _LinkedEngines;
+        protected List<IEngine> _LinkedEngines;
         protected List<IUpdateable> _UpdateableList;
-        public Engine(GameRoot gameRoot)
+
+        [Inject]
+        public void Inject(GameRoot gameRoot)
         {
             _GameRoot = gameRoot;
-            _LinkedEngines = new List<Engine>();
+        }
+        
+        public Engine()
+        {
+            _LinkedEngines = new List<IEngine>();
             _UpdateableList = new List<IUpdateable>();
         }
 
@@ -31,7 +43,7 @@ namespace HoakleEngine.Core
             }
         }
 
-        public void LinkEngine(Engine engine)
+        public void LinkEngine(IEngine engine)
         {
             _LinkedEngines.Add(engine);
         }

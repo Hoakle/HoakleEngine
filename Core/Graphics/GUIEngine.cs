@@ -1,31 +1,53 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using HoakleEngine.Core.Game;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Zenject;
 
 namespace HoakleEngine.Core.Graphics
 {
-    public abstract class GUIEngine : Engine
+    public interface IGUIEngine : IEngine
+    {
+        public Camera Camera { get; }
+        public void CreateGUI<T>(string key, Action<T> onInstantiated = null) where T : GraphicalUserInterface;
+        public void CreateDataGUI<T, TData>(string key, TData data, Action<T> onInstantiated = null)
+            where T : DataGUI<TData>;
+        public void CreateGUIComponent<T>(string key, Transform parent, Action<T> onInstantiated = null)
+            where T : GuiComponent;
+        public void CreateDataGUIComponent<T, TData>(string key, TData data, Transform parent,
+            Action<T> onInstantiated = null) where T : DataGuiComponent<TData>;
+        public T InitDataGUIComponent<T, TData>(DataGuiComponent<TData> component, TData data)
+            where T : DataGuiComponent<TData>;
+        public T InitGUIComponent<T>(GuiComponent gameObject) where T : GuiComponent;
+        public void Dispose(GraphicalUserInterface graphicalUserInterface);
+    }
+    
+    public abstract class GUIEngine : Engine, IGUIEngine
     {
         private Camera _Camera;
         public Camera Camera => _Camera;
         private List<Canvas> _SortedCanvas;
-        public GUIEngine(GameRoot gameRoot) : base(gameRoot)
+        private Transform _GameContainer;
+        private DiContainer _DiContainer;
+
+        [Inject]
+        public void Inject(DiContainer container)
+        {
+            _DiContainer = container;
+        }
+        
+        public GUIEngine()
         {
             _SortedCanvas = new List<Canvas>();
         }
 
-        public void Init(Camera camera)
-        {
-            _Camera = camera;
-        }
-
         public void CreateGUI<T>(string key, Action<T> onInstantiated = null) where T : GraphicalUserInterface
         {
-            var asyncOperation = Addressables.InstantiateAsync(key);
+            var asyncOperation = Addressables.InstantiateAsync(key, _GameContainer);
             asyncOperation.Completed += (asyncOperation) =>
             {
                 if (asyncOperation.Result is { } gameObject)
@@ -47,7 +69,7 @@ namespace HoakleEngine.Core.Graphics
         
         public void CreateDataGUI<T, TData>(string key, TData data, Action<T> onInstantiated = null) where T : DataGUI<TData>
         {
-            Addressables.InstantiateAsync(key).Completed += (asyncOperation) =>
+            Addressables.InstantiateAsync(key, _GameContainer).Completed += (asyncOperation) =>
             {
                 if (asyncOperation.Result is { } gameObject)
                 {
@@ -126,6 +148,7 @@ namespace HoakleEngine.Core.Graphics
                 if(gameObject.GetComponent<T>() is { } gui)
                 {
                     gui.LinkEngine(this);
+                    _DiContainer.InjectGameObject(gui.gameObject);
                     return gui;
                 }
                 else
@@ -141,6 +164,7 @@ namespace HoakleEngine.Core.Graphics
             if(gameObject.GetComponent<T>() is { } gui)
             {
                 gui.LinkEngine(this);
+                _DiContainer.InjectGameObject(gui.gameObject);
                 gameObject.OnReady();
                 return gui;
             }
@@ -174,6 +198,7 @@ namespace HoakleEngine.Core.Graphics
                 gui.Canvas.planeDistance = 1f;
                 _SortedCanvas.Add(gui.Canvas);
                 ApplySorting();
+                _DiContainer.InjectGameObject(gui.gameObject);
                 return gui;
             }
             else

@@ -1,34 +1,23 @@
 using System.Collections.Generic;
 using HoakleEngine.Core.Game;
+using UniRx;
 using UnityEngine;
+using Zenject;
 using Object = UnityEngine.Object;
 
 namespace HoakleEngine.Core.Audio
 {
-    public class AudioPlayer : IUpdateable
+    public class AudioPlayer : ITickable
     {
-        private static AudioPlayer _Instance;
-        public static AudioPlayer Instance
-        {
-            get
-            {
-                _Instance ??= new AudioPlayer();
-                return _Instance;
-            }
-        }
-
         private Dictionary<AudioKeys, AudioSettings> _AudioDic;
         private Transform _AudioPlayerTransform;
 
         private Dictionary<AudioKeys, List<AudioSource>> _CurrentlyPlaying;
 
         private SettingsGameSave _SettingsGameSave;
-        public void Init(SettingsGameSave settingsGameSave, AudioList list, Transform parent)
+
+        public AudioPlayer(AudioList list, Transform parent)
         {
-            _SettingsGameSave = settingsGameSave;
-            _SettingsGameSave.OnMusicToogle += ToogleMusic;
-            _SettingsGameSave.OnSfxToogle += ToogleSfx;
-            
             _CurrentlyPlaying = new Dictionary<AudioKeys, List<AudioSource>>();
             _AudioDic = new Dictionary<AudioKeys, AudioSettings>();
             foreach (var audio in list._AudioList)
@@ -39,6 +28,14 @@ namespace HoakleEngine.Core.Audio
             _AudioPlayerTransform = parent;
         }
         
+        [Inject]
+        public void Inject(SettingsGameSave settingsGameSave)
+        {
+            _SettingsGameSave = settingsGameSave;
+            _SettingsGameSave.HasMusic.Subscribe(ToogleMusic);
+            _SettingsGameSave.HasSfx.Subscribe(ToogleSfx);
+        }
+
         public void Play(AudioKeys key)
         {
             if (IsAlreadyPlaying(key) && _AudioDic[key].PlayOnlyOnce)
@@ -62,9 +59,9 @@ namespace HoakleEngine.Core.Audio
         private float GetVolume(AudioSettings audioSettings)
         {
             if (audioSettings.IsMusic)
-                return _SettingsGameSave.HasMusic ? audioSettings.Volume : 0f;
+                return _SettingsGameSave.HasMusic.Value ? audioSettings.Volume : 0f;
             
-            return _SettingsGameSave.HasSfx ? audioSettings.Volume : 0f;
+            return _SettingsGameSave.HasSfx.Value ? audioSettings.Volume : 0f;
         }
 
         public void Stop(AudioKeys key)
@@ -88,7 +85,6 @@ namespace HoakleEngine.Core.Audio
         
         private void ToogleMusic(bool isActive)
         {
-            Debug.LogError(_SettingsGameSave.HasMusic);
             foreach (var audioList in _CurrentlyPlaying)
             {
                 if(_AudioDic[audioList.Key].IsMusic)
@@ -111,11 +107,8 @@ namespace HoakleEngine.Core.Audio
             }
         }
         
-        public void Update(bool isPaused)
+        public void Tick()
         {
-            if (isPaused)
-                return;
-            
             foreach (var audioList in _CurrentlyPlaying)
             {
                 for(int i = audioList.Value.Count - 1; i >= 0; i--)

@@ -20,7 +20,7 @@ namespace HoakleEngine.Core.Services.AdsServices
             get => _Actor.OnShowComplete;
             set => _Actor.OnShowComplete = value;
         }
-        public override void Init()
+        public override void Initialize()
         {
             _Actor = new AdsTPA();
 

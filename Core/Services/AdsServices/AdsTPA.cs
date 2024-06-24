@@ -72,12 +72,12 @@ namespace HoakleEngine.Core.Services.AdsServices
 
         public void OnUnityAdsShowStart(string placementId)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnUnityAdsShowClick(string placementId)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void OnUnityAdsShowComplete(string placementId, UnityAdsShowCompletionState showCompletionState)

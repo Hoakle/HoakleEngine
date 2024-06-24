@@ -1,44 +1,62 @@
 using System;
+using UniRx;
 using UnityEngine;
 
 namespace HoakleEngine.Core.Game
 {
     [Serializable]
-    public class SettingsGameSave : GameSave
+    public class SettingsGameSave : GameSaveHandler<SettingsData>
     {
-        [SerializeField] private bool _HasMusic = true;
-        [SerializeField] private bool _HasSfx = true;
+        public IReadOnlyReactiveProperty<bool> HasMusic
+            => _HasMusic;
 
-        public Action<bool> OnMusicToogle;
-        public Action<bool> OnSfxToogle;
+        public IReadOnlyReactiveProperty<bool> HasSfx
+            => _HasSfx;
         
-        public SettingsGameSave()
-        {
-            SaveName = "SettingsGameSave";
-        }
+        private IReactiveProperty<bool> _HasMusic = new ReactiveProperty<bool>();
+        private IReactiveProperty<bool> _HasSfx = new ReactiveProperty<bool>();
         
-        public bool HasMusic
-        {
-            get => _HasMusic;
-            set
-            {
-                _HasMusic = value;
-                OnMusicToogle?.Invoke(value);
-            }
-        }
-        
-        public bool HasSfx
-        {
-            get => _HasSfx;
-            set
-            {
-                _HasSfx = value;
-                OnSfxToogle?.Invoke(value);
-            }
-        }
-        public override void Init()
+        public SettingsGameSave() : base("SettingsGameSave")
         {
             
         }
+        
+        protected override void BuildData()
+        {
+            base.BuildData();
+            if (!_GameSaveService.Exist<SettingsData>(_Identifier))
+            {
+                _Data.HasMusic = true;
+                _Data.HasSfx = true;
+            }
+            
+            _HasMusic.Value = _Data.HasMusic;
+            _HasSfx.Value = _Data.HasSfx;
+        }
+
+        public override void Save()
+        {
+            _Data.HasMusic = _HasMusic.Value;
+            _Data.HasSfx = _HasSfx.Value;
+            base.Save();
+        }
+
+        public void ToggleMusic(bool hasMusic)
+        {
+            _HasMusic.Value = hasMusic;
+            Save();
+        }
+        
+        public void ToggleSfx(bool hasSfx)
+        {
+            _HasSfx.Value = hasSfx;
+            Save();
+        }
+    }
+    
+    public struct SettingsData
+    {
+        public bool HasMusic;
+        public bool HasSfx;
     }
 }

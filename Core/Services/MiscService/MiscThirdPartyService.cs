@@ -6,7 +6,7 @@ namespace HoakleEngine.Core.Services
     public class MiscThirdPartyService : ThirdPartyService
     {
         private MiscThirdPartyActor _Actor;
-        public override void Init()
+        public override void Initialize()
         {
             _Actor = new AndroidMiscTPA();
             _Actor.Init();

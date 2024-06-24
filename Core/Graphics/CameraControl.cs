@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
+using Zenject;
 
 namespace HoakleEngine.Core.Graphics
 {
@@ -8,9 +10,20 @@ namespace HoakleEngine.Core.Graphics
         protected List<Transform> _Targets; // All the targets the camera needs to encompass.
         protected Camera _Camera;
         public Camera Camera => _Camera;
-        protected CameraControl (Camera camera)
+
+        [Inject]
+        public void Inject(ICameraProvider cameraProvider)
         {
-            _Camera = camera;
+            _Camera = cameraProvider.Camera.Value;
+            cameraProvider.Camera
+                .Subscribe(camera =>
+                {
+                    _Camera = camera;
+                });
+        }
+        
+        protected CameraControl ()
+        {
             _Targets = new List<Transform>();
         }
 

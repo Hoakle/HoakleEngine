@@ -3,17 +3,16 @@ using HoakleEngine.Core.Audio;
 
 namespace HoakleEngine.Core.Game
 {
-    public abstract class GameEngine : Engine
+    public interface IGameEngine : IEngine
     {
-        protected GameDataHandler _GameDataHandler;
-        public GameEngine(GameRoot gameRoot) : base(gameRoot)
-        {
-            
-        }
-
+        
+    }
+    
+    public abstract class GameEngine : Engine, IGameEngine
+    {
         public override void Init()
         {
-            _UpdateableList.Add(AudioPlayer.Instance);
+            
         }
 
         public override void Update(bool isPaused)

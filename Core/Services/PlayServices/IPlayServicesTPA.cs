@@ -15,5 +15,10 @@ namespace HoakleEngine.Core.Services.PlayServices
         public void UpdateScore(string key, long score);
         public void LoadScore(string key, bool isPlayerCentered);
         public void DisplayLeaderboards();
+        
+        //Review
+        public Action OnReviewInfoReady { get; set; }
+        public void PrepareReview();
+        public void LaunchReview();
     }
 }

@@ -5,6 +5,7 @@ using RetroRush.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace HoakleEngine.Core.UI.Components
 {
@@ -16,9 +17,15 @@ namespace HoakleEngine.Core.UI.Components
 
         public Action OnClaimReward;
         private AdsThirdPartyService _AdsTP;
+
+        [Inject]
+        public void Inject(AdsThirdPartyService adsThirdPartyService)
+        {
+            _AdsTP = adsThirdPartyService;
+        }
+        
         public override void OnReady()
         {
-            _AdsTP = _GuiEngine.ServicesContainer.GetService<AdsThirdPartyService>();
             _AdsTP.OnLoaded += AdLoaded;
             _AdsTP.OnShowComplete += AdShowComplete;
             

@@ -74,24 +74,12 @@ namespace HoakleEngine.Core.Communication
 
     public enum EngineEventType
     {
-        SpeedBonus,
-        Coin,
-        SpeedBonusFadeOut,
-        GameOver,
         StartGame,
-        Magnet,
-        MagnetFadeOut,
-        Shield,
-        ShieldFadeOut,
         MoveSideway,
         BackToMenu,
-        StartBoost,
-        Lazer,
-        CoinFactorStarted,
         ShieldFadeOutWarning,
-        PlayerDied,
         Continue,
         GameModeChange,
-        Win
+        MainMenuLoaded,
     }
 }
