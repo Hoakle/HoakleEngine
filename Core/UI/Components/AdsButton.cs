@@ -1,7 +1,8 @@
 using System;
+using HoakleEngine.Core.Config.Ads;
 using HoakleEngine.Core.Graphics;
+using HoakleEngine.Core.Localization;
 using HoakleEngine.Core.Services.AdsServices;
-using RetroRush.Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +13,7 @@ namespace HoakleEngine.Core.UI.Components
     public class AdsButton : DataGuiComponent<AdsConfigData>
     {
         [SerializeField] private Button _Button = null;
-        [SerializeField] private TextMeshProUGUI _Label = null;
+        [SerializeField] private LocalizedText _Label = null;
         private string _AdUnitId = "Rewarded_Android";
 
         public Action OnClaimReward;
@@ -38,10 +39,10 @@ namespace HoakleEngine.Core.UI.Components
         private void SetText()
         {
             if (Data.Type == AdsType.SIMPLE)
-                _Label.text = "CONTINUE";
+                _Label.SetKey("Ads/Continue");
             else
             {
-                _Label.text = "x" + Data.Value;
+                _Label.SetKey("x" + Data.Value);
             }
         }
         private void LoadAd()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HoakleEngine.Core.Services
+namespace HoakleEngine.Core.Services.GameSaveService
 {
     public interface IGameSaveService
     {

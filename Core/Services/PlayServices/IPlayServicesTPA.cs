@@ -1,12 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace HoakleEngine.Core.Services.PlayServices
 {
     public interface IPlayServicesTPA : ThirdPartyActor
     {
-        public void SignIn();
-        public void ManualSignIn();
-
+        public void Synchronize(List<string> achievementKeys);
         public void UnlockAchievement(string key);
         public void DisplayAchievements();
         

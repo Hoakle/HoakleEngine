@@ -1,8 +1,7 @@
-using UniRx;
 using UnityEngine;
-using Zenject;
+using UniRx;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Graphics
 {
     public interface ICameraProvider
     {

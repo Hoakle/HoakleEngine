@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RetroRush.Config
+namespace HoakleEngine.Core.Config.Ads
 {
     [CreateAssetMenu(fileName = "AdsConfigData", menuName = "Game Data/Config/AdsConfigData")]
     public class AdsConfigData : ScriptableObject

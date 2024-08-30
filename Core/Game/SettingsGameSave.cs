@@ -12,7 +12,17 @@ namespace HoakleEngine.Core.Game
 
         public IReadOnlyReactiveProperty<bool> HasSfx
             => _HasSfx;
-        
+
+        public SystemLanguage Language
+        {
+            get => (SystemLanguage) _Data.Language;
+            set
+            {
+                _Data.Language = (int) value;
+                Save();
+            }
+        }
+
         private IReactiveProperty<bool> _HasMusic = new ReactiveProperty<bool>();
         private IReactiveProperty<bool> _HasSfx = new ReactiveProperty<bool>();
         
@@ -58,5 +68,6 @@ namespace HoakleEngine.Core.Game
     {
         public bool HasMusic;
         public bool HasSfx;
+        public int Language;
     }
 }

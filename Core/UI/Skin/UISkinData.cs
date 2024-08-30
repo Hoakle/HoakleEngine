@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.UI.Skin
 {
     [CreateAssetMenu(fileName = "UISkinData", menuName = "Game Data/UISkin/UISkinData")]
     public class UISkinData : ScriptableObject

@@ -1,7 +1,7 @@
 {
     "name": "EngineEditors",
     "rootNamespace": "",
-    "references": [],
+    "references": ["GUID:03d4f1e800a4929478ee1cfd457477a0"],
     "includePlatforms": [
         "Editor"
     ],

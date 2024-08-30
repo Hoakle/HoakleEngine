@@ -1,4 +1,4 @@
-namespace HoakleEngine
+namespace HoakleEngine.Core.Game
 {
     public interface IUpdateable
     {

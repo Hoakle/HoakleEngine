@@ -1,8 +1,7 @@
-using HoakleEngine.Core.Audio;
 using UnityEngine;
 using Zenject;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Audio
 {
     public class AudioInstaller : MonoInstaller
     {

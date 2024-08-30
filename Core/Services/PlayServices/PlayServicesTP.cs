@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using HoakleEngine.Core.Services;
-using HoakleEngine.Core.Services.PlayServices;
 using UnityEngine;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Services.PlayServices
 {
     public interface IPlayServicesTP
     {
-        public void SignIn();
-        public void ManualSignIn();
+        public void Synchronize(List<string> achievementKeys);
         public void UnlockAchievement(string achievementKey);
         public void DisplayAchievements();
         public Action<LeaderboardData> OnScoreLoaded { get; set; }
@@ -39,22 +36,13 @@ namespace HoakleEngine
             _Actor.OnReviewInfoReady += () => OnReviewInfoReady?.Invoke();
             _Actor.Init();
         }
-        
-#region Authentication
-        public void SignIn()
-        {
-            _Actor.SignIn();
-        }
-
-        public void ManualSignIn()
-        {
-            _Actor.ManualSignIn();
-        }
-        
-
-#endregion
 
 #region Achievements
+
+        public void Synchronize(List<string> achievementKeys)
+        {
+            _Actor.Synchronize(achievementKeys);
+        }
 
         public void UnlockAchievement(string achievementKey)
         {
@@ -65,7 +53,7 @@ namespace HoakleEngine
         {
             _Actor.DisplayAchievements();
         }
-        
+            
 #endregion
         
 #region Leaderboards

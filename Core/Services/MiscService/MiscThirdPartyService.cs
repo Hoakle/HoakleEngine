@@ -1,7 +1,4 @@
-using HoakleEngine.Core.Services.MiscService;
-using UnityEngine;
-
-namespace HoakleEngine.Core.Services
+namespace HoakleEngine.Core.Services.MiscService
 {
     public class MiscThirdPartyService : ThirdPartyService
     {

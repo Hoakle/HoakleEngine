@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using HoakleEngine.Core.Services;
-using UnityEngine;
-
-namespace HoakleEngine
+namespace HoakleEngine.Core.Services.MiscService
 {
     public interface MiscThirdPartyActor : ThirdPartyActor
     {

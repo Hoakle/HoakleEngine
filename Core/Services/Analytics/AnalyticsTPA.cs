@@ -1,9 +1,8 @@
 using System;
 using Firebase;
 using Firebase.Analytics;
-using HoakleEngine.Core.Services;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Services.Analytics
 {
     public class AnalyticsTPA : IAnalyticsTPA
     {

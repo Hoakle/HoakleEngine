@@ -1,12 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using HoakleEngine.Core.Audio;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace HoakleEngine
+namespace HoakleEngine.Core.Audio
 {
     public class PlayOnClick : MonoBehaviour
     {

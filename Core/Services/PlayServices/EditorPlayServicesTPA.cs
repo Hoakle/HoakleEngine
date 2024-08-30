@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace HoakleEngine.Core.Services.PlayServices
 {
@@ -28,6 +24,11 @@ namespace HoakleEngine.Core.Services.PlayServices
         public void ManualSignIn()
         {
             _IsSignedIn = true;
+        }
+
+        public void Synchronize(List<string> achievementKeys)
+        {
+            throw new NotImplementedException("Synchronize not available to do in editor");
         }
 
         public void UnlockAchievement(string key)

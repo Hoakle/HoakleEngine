@@ -1,10 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using UnityEngine;
 
-namespace HoakleEngine.Addons
+namespace HoakleEngine.Addons.Scripts
 {
     public class MeshTrail : MonoBehaviour
     {

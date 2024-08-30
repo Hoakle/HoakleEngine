@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Google.Play.Common;
@@ -37,6 +38,14 @@ namespace HoakleEngine.Core.Services.PlayServices
             }
         }
 
+        public void Synchronize(List<string> achievementKeys)
+        {
+            PlayGamesPlatform.Instance.LoadAchievements(callback =>
+            {
+                
+            });
+        }
+
         public void UnlockAchievement(string key)
         {
             PlayGamesPlatform.Instance.UnlockAchievement(key, success =>
@@ -62,44 +71,13 @@ namespace HoakleEngine.Core.Services.PlayServices
 
         public void LoadScore(string key, bool isPlayerCentered)
         {
-            /*ILeaderboard lb = PlayGamesPlatform.Instance.CreateLeaderboard();
-            lb.id = key;
-            Range range;
-            range.count = 10;
-            range.from = isPlayerCentered ? -1 : 10;
-            lb.range = range;
-            lb.timeScope = TimeScope.AllTime;
-            lb.LoadScores(ok =>
-            {
-                if (ok) {
-                    string[] list = lb.scores.Append(lb.localUserScore).Select(p => p != null ? p.userID : "").ToArray();
-                    PlayGamesPlatform.Instance.LoadUsers(list, profiles =>
-                    {
-                        LeaderboardData data = new LeaderboardData(
-                            lb.title,
-                            GetDataFromIScore(lb.localUserScore, profiles.First(p => p.id == lb.localUserScore.userID)),
-                            lb.scores.ToList().Select(score => GetDataFromIScore(score, profiles.First(p => p.id == score.userID))).ToList());
-                            
-                        OnScoreLoaded?.Invoke(data);
-                    });
-                }
-                else {
-                    OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.LoadScoreError, (int) -1 , "Load score error"));
-                }
-            });*/
-            
+            if(isPlayerCentered)
+                PlayGamesPlatform.Instance.LoadScores(key, LoadScoreCallback);
             PlayGamesPlatform.Instance.LoadScores(key, isPlayerCentered ? LeaderboardStart.PlayerCentered : LeaderboardStart.TopScores, 10, LeaderboardCollection.Public, LeaderboardTimeSpan.AllTime,
                 scoreData =>
                 {
                     if(scoreData.Status == ResponseStatus.Success)
                     {
-                        if (scoreData.PlayerScore == null && isPlayerCentered)
-                        {
-                            OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.NoPlayerScore, -1,
-                                "No player score for this leaderboard"));
-                            return;
-                        }
-                        
                         string[] list = scoreData.Scores.Append(scoreData.PlayerScore).Select(p => p != null ? p.userID : "").ToArray();
                         PlayGamesPlatform.Instance.LoadUsers(list, profiles =>
                         {
@@ -119,6 +97,10 @@ namespace HoakleEngine.Core.Services.PlayServices
                 });
         }
 
+        private void LoadScoreCallback(IScore[] scores)
+        {
+            
+        }
         private ScoreData GetDataFromIScore(IScore score, IUserProfile profile)
         {
             if (score == null)
