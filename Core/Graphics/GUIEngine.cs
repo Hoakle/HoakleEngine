@@ -90,6 +90,7 @@ namespace HoakleEngine.Core.Graphics
                 if (asyncOperation.Result is { } gameObject)
                 {
                     T gui = InitGUIComponent<T>(gameObject);
+                    _DiContainer.InjectGameObject(gui.gameObject);
                     gui.OnReady();
                     onInstantiated?.Invoke(gui);
                 }
@@ -122,6 +123,7 @@ namespace HoakleEngine.Core.Graphics
             if (dataGui is {})
             {
                 dataGui.Data = data;
+                _DiContainer.InjectGameObject(dataGui.gameObject);
                 dataGui.OnReady();
                 return dataGui;
             }
@@ -136,6 +138,7 @@ namespace HoakleEngine.Core.Graphics
             if (dataGui is {})
             {
                 dataGui.Data = data;
+                _DiContainer.InjectGameObject(dataGui.gameObject);
                 dataGui.OnReady();
                 return dataGui;
             }
@@ -148,7 +151,6 @@ namespace HoakleEngine.Core.Graphics
                 if(gameObject.GetComponent<T>() is { } gui)
                 {
                     gui.LinkEngine(this);
-                    _DiContainer.InjectGameObject(gui.gameObject);
                     return gui;
                 }
                 else
