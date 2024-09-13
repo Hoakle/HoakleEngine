@@ -64,6 +64,7 @@ namespace HoakleEngine.Core.Game
         }
     }
     
+    [Serializable]
     public struct SettingsData
     {
         public bool HasMusic;

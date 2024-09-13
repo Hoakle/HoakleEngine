@@ -12,9 +12,10 @@ namespace HoakleEngine.Core.Localization
         public void SetLanguage(SystemLanguage language);
         public string Translate(string key, params string[] parameters);
         public Action OnLanguageChange { get; set; }
+        bool IsInitialized { get; }
     }
     
-    public class LocalizationProvider : ILocalizationProvider
+    public class LocalizationProvider : ILocalizationProvider, IInitializable
     {
         public Dictionary<SystemLanguage, string> AvailableLanguage
             => _LocalizationDataBase.GetAvailableLanguages();
@@ -24,18 +25,19 @@ namespace HoakleEngine.Core.Localization
             get => _OnLanguageChange;
             set => _OnLanguageChange = value;
         }
-        
+        public bool IsInitialized => _IsInitialized;
+
         private LocalizationDataBase _LocalizationDataBase;
         private Dictionary<string, string> _LanguageKeys;
         private Action _OnLanguageChange;
         private SettingsGameSave _SettingsGameSave;
+        private bool _IsInitialized;
 
         [Inject]
         public void Inject(LocalizationDataBase localizationDataBase, SettingsGameSave settingsGameSave)
         {
             _LocalizationDataBase = localizationDataBase;
             _SettingsGameSave = settingsGameSave;
-            Initialize();
         }
         
         public void SetLanguage(SystemLanguage language)
@@ -66,7 +68,7 @@ namespace HoakleEngine.Core.Localization
             return translation;
         }
 
-        private void Initialize()
+        public void Initialize()
         {
             _LanguageKeys ??= new Dictionary<string, string>();
             foreach (var key in _LocalizationDataBase.Keys)
@@ -82,6 +84,7 @@ namespace HoakleEngine.Core.Localization
             SetLanguage(_SettingsGameSave.Language);
 
             _SettingsGameSave.Language = _LocalizationDataBase.SelectedLanguage.Language;
+            _IsInitialized = true;
         }
     }
 }

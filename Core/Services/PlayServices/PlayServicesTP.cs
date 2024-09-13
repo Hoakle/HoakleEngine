@@ -148,12 +148,14 @@ namespace HoakleEngine.Core.Services.PlayServices
         public string UserId;
         public int Rank;
         public long Score;
+        public Texture2D Image;
         
-        public ScoreData(string userId, int rank, long score)
+        public ScoreData(string userId, int rank, long score, Texture2D texture)
         {
             UserId = userId;
             Rank = rank;
             Score = score;
+            Image = texture;
         }
     }
 }

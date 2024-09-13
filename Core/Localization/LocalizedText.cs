@@ -19,7 +19,8 @@ namespace HoakleEngine.Core.Localization
             _LocalizationProvider = localizationProvider;
             _LocalizationProvider.OnLanguageChange += Translate;
             
-            Translate();
+            if(_LocalizationProvider.IsInitialized)
+                Translate();
         }
         
         

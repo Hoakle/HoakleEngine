@@ -49,33 +49,33 @@ namespace HoakleEngine.Core.Services.PlayServices
         public void LoadScore(string key, bool isPlayerCentered)
         {
             List<ScoreData> fakeScores = new List<ScoreData>();
-            ScoreData playerScore = new ScoreData("Hoakle", 15, 10000);
+            ScoreData playerScore = new ScoreData("Hoakle", 15, 10000, new Texture2D(50,50));
             
             if (isPlayerCentered)
             {
-                fakeScores.Add(new ScoreData("Kimberley", 11, 50000));
-                fakeScores.Add(new ScoreData("Venom", 12, 45000));
-                fakeScores.Add(new ScoreData("Liv", 13, 40000));
-                fakeScores.Add(new ScoreData("Leon", 14, 35000));
+                fakeScores.Add(new ScoreData("Kimberley", 11, 50000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Venom", 12, 45000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Liv", 13, 40000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Leon", 14, 35000, new Texture2D(50,50)));
                 fakeScores.Add(playerScore);
-                fakeScores.Add(new ScoreData("Mary", 16, 25000));
-                fakeScores.Add(new ScoreData("Tyler", 17, 20000));
-                fakeScores.Add(new ScoreData("Shirley", 18, 15000));
-                fakeScores.Add(new ScoreData("Munson", 19, 10000));
-                fakeScores.Add(new ScoreData("Anthony", 20, 5000));
+                fakeScores.Add(new ScoreData("Mary", 16, 25000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Tyler", 17, 20000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Shirley", 18, 15000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Munson", 19, 10000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Anthony", 20, 5000, new Texture2D(50,50)));
             }
             else
             {
-                fakeScores.Add(new ScoreData("SidoPiou", 1, 50000));
-                fakeScores.Add(new ScoreData("Venom", 2, 45000));
-                fakeScores.Add(new ScoreData("Liv", 3, 40000));
-                fakeScores.Add(new ScoreData("Leon", 4, 35000));
-                fakeScores.Add(new ScoreData("PapiPoule", 5, 30000));
-                fakeScores.Add(new ScoreData("Mary", 6, 25000));
-                fakeScores.Add(new ScoreData("Tyler", 7, 20000));
-                fakeScores.Add(new ScoreData("Shirley", 8, 15000));
-                fakeScores.Add(new ScoreData("Munson", 9, 10000));
-                fakeScores.Add(new ScoreData("Anthony", 10, 5000));
+                fakeScores.Add(new ScoreData("SidoPiou", 1, 50000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Venom", 2, 45000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Liv", 3, 40000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Leon", 4, 35000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("PapiPoule", 5, 30000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Mary", 6, 25000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Tyler", 7, 20000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Shirley", 8, 15000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Munson", 9, 10000, new Texture2D(50,50)));
+                fakeScores.Add(new ScoreData("Anthony", 10, 5000, new Texture2D(50,50)));
             }
             
             
@@ -86,7 +86,7 @@ namespace HoakleEngine.Core.Services.PlayServices
 
         private ScoreData GetDataFromIScore(IScore score)
         {
-            return new ScoreData(score.userID, score.rank, score.value);
+            return new ScoreData(score.userID, score.rank, score.value, new Texture2D(50,50));
         }
         
         public void DisplayLeaderboards()
