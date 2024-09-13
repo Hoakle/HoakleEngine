@@ -124,20 +124,46 @@ namespace HoakleEngine.Core.Services.PlayServices
         public async void PrepareReview()
         {
             _ReviewManager = new ReviewManager();
-            PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode> requestFlowOperation = await new Task<PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode>>(() => _ReviewManager.RequestReviewFlow());
+            Debug.LogError("PlayReviewInfo request started");
+            PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode> requestFlowOperation = await new Task<PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode>>( () =>
+            {
+                var request = _ReviewManager.RequestReviewFlow();
+                while (!request.IsDone)
+                {
+                    //Continue
+                }
+
+                return request;
+            });
+                
+            
             if (requestFlowOperation.Error != ReviewErrorCode.NoError)
             { 
                 OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) requestFlowOperation.Error , "Request Flow Operation Error: " + requestFlowOperation.Error));
                 return;
             }
             
-            _PlayReviewInfo = await new Task<PlayReviewInfo>(() => requestFlowOperation.GetResult());
+            _PlayReviewInfo = requestFlowOperation.GetResult();
+            
+            Debug.LogError("PlayReviewInfo ready");
             OnReviewInfoReady?.Invoke();
         }
-
+        
         public async void LaunchReview()
         {
-            PlayAsyncOperation<VoidResult,ReviewErrorCode> launchFlowOperation = await new Task<PlayAsyncOperation<VoidResult, ReviewErrorCode>>(() => _ReviewManager.LaunchReviewFlow(_PlayReviewInfo));
+            Debug.LogError("Review flow operation request started");
+            PlayAsyncOperation<VoidResult,ReviewErrorCode> launchFlowOperation = await new Task<PlayAsyncOperation<VoidResult, ReviewErrorCode>>(() =>
+            {
+                var request = _ReviewManager.LaunchReviewFlow(_PlayReviewInfo);
+                while (!request.IsDone)
+                {
+                    //Continue
+                }
+
+                return request;
+            });
+
+            _PlayReviewInfo = null;
             if (launchFlowOperation.Error != ReviewErrorCode.NoError)
             {
                 OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) launchFlowOperation.Error , "Launch Flow Operation Error: " + launchFlowOperation.Error));
