@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using Zenject;
 
 namespace HoakleEngine.Core.Services.PlayServices
 {
@@ -23,6 +24,13 @@ namespace HoakleEngine.Core.Services.PlayServices
     public class PlayServicesTP : ThirdPartyService, IPlayServicesTP
     {
         private IPlayServicesTPA _Actor;
+        private GameRoot _GameRoot;
+
+        private Coroutine _ReviewCoroutine;
+        
+        [Inject]
+        public void Inject(GameRoot gameRoot)
+            => _GameRoot = gameRoot;
         public override void Initialize()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -82,12 +90,20 @@ namespace HoakleEngine.Core.Services.PlayServices
         public Action OnReviewInfoReady { get; set; }
         public void PrepareReview()
         {
-            _Actor.PrepareReview();
+            StopCoroutine(_ReviewCoroutine);
+            _ReviewCoroutine = _GameRoot.StartEngineCoroutine(_Actor.PrepareReview());
         }
 
         public void LaunchReview()
         {
-            _Actor.LaunchReview();
+            StopCoroutine(_ReviewCoroutine);
+            _ReviewCoroutine = _GameRoot.StartEngineCoroutine(_Actor.LaunchReview());
+        }
+
+        private void StopCoroutine(Coroutine coroutine)
+        {
+            if(coroutine != null)
+                _GameRoot.StopEngineCoroutine(coroutine);
         }
 #endregion
         

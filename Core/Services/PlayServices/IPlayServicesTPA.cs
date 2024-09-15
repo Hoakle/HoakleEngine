@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace HoakleEngine.Core.Services.PlayServices
@@ -17,7 +18,7 @@ namespace HoakleEngine.Core.Services.PlayServices
         
         //Review
         public Action OnReviewInfoReady { get; set; }
-        public void PrepareReview();
-        public void LaunchReview();
+        public IEnumerator PrepareReview();
+        public IEnumerator LaunchReview();
     }
 }

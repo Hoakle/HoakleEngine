@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
@@ -96,14 +97,15 @@ namespace HoakleEngine.Core.Services.PlayServices
 
         public Action OnReviewInfoReady { get; set; }
 
-        public void PrepareReview()
+        public IEnumerator PrepareReview()
         {
+            yield return null;
             OnReviewInfoReady?.Invoke();
         }
 
-        public void LaunchReview()
+        public IEnumerator LaunchReview()
         {
-            
+            yield return null;
         }
     }
 }

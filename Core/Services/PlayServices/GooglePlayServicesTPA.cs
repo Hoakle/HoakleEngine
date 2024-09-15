@@ -1,14 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Google.Play.Common;
 using Google.Play.Review;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
-using Range = UnityEngine.SocialPlatforms.Range;
+using Zenject;
 
 namespace HoakleEngine.Core.Services.PlayServices
 {
@@ -16,6 +15,7 @@ namespace HoakleEngine.Core.Services.PlayServices
     {
         public Action<ActorError> OnError { get; set; }
         public Action<LeaderboardData> OnScoreLoaded { get; set; }
+        
         public void Init()
         {
             SignIn();
@@ -117,57 +117,41 @@ namespace HoakleEngine.Core.Services.PlayServices
         {
             PlayGamesPlatform.Instance.ShowLeaderboardUI();
         }
-
+        
         private ReviewManager _ReviewManager;
         private PlayReviewInfo _PlayReviewInfo;
         public Action OnReviewInfoReady { get; set; }
-        public async void PrepareReview()
+        public IEnumerator PrepareReview()
         {
-            _ReviewManager = new ReviewManager();
-            Debug.LogError("PlayReviewInfo request started");
-            PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode> requestFlowOperation = await new Task<PlayAsyncOperation<PlayReviewInfo,ReviewErrorCode>>( () =>
-            {
-                var request = _ReviewManager.RequestReviewFlow();
-                while (!request.IsDone)
-                {
-                    //Continue
-                }
+            Debug.LogError("Prepare Review - RequestReviewFlow");
+            if (_ReviewManager == null) _ReviewManager = new ReviewManager();
 
-                return request;
-            });
-                
-            
+            var requestFlowOperation = _ReviewManager.RequestReviewFlow();
+            yield return requestFlowOperation;
             if (requestFlowOperation.Error != ReviewErrorCode.NoError)
-            { 
+            {
                 OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) requestFlowOperation.Error , "Request Flow Operation Error: " + requestFlowOperation.Error));
-                return;
+                yield break;
             }
-            
+
+            Debug.LogError("Prepare Review - GetResult");
             _PlayReviewInfo = requestFlowOperation.GetResult();
-            
-            Debug.LogError("PlayReviewInfo ready");
             OnReviewInfoReady?.Invoke();
         }
-        
-        public async void LaunchReview()
+
+        public IEnumerator LaunchReview()
         {
-            Debug.LogError("Review flow operation request started");
-            PlayAsyncOperation<VoidResult,ReviewErrorCode> launchFlowOperation = await new Task<PlayAsyncOperation<VoidResult, ReviewErrorCode>>(() =>
-            {
-                var request = _ReviewManager.LaunchReviewFlow(_PlayReviewInfo);
-                while (!request.IsDone)
-                {
-                    //Continue
-                }
-
-                return request;
-            });
-
+            Debug.LogError("LaunchReview - LaunchReviewFlow");
+            var launchFlowOperation = _ReviewManager.LaunchReviewFlow(_PlayReviewInfo);
+            yield return launchFlowOperation;
             _PlayReviewInfo = null;
             if (launchFlowOperation.Error != ReviewErrorCode.NoError)
             {
-                OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) launchFlowOperation.Error , "Launch Flow Operation Error: " + launchFlowOperation.Error));
+                Debug.LogError("LaunchReview - DirectlyOpen");
+                DirectlyOpen();
             }
         }
+        
+        private void DirectlyOpen() { Application.OpenURL($"https://play.google.com/store/apps/details?id={Application.identifier}"); }
     }
 }
