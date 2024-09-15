@@ -16,8 +16,16 @@ namespace HoakleEngine.Core
     
     public abstract class Engine : IEngine
     {
+        protected GameRoot _GameRoot;
+        
         protected List<IEngine> _LinkedEngines;
         protected List<IUpdateable> _UpdateableList;
+
+        [Inject]
+        public void Inject(GameRoot gameRoot)
+        {
+            _GameRoot = gameRoot;
+        }
         
         public Engine()
         {
