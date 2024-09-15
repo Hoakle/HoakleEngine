@@ -5,6 +5,7 @@ using System.Linq;
 using Google.Play.Review;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using ModestTree;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using Zenject;
@@ -43,7 +44,15 @@ namespace HoakleEngine.Core.Services.PlayServices
         {
             PlayGamesPlatform.Instance.LoadAchievements(callback =>
             {
-                
+                if(callback == null || callback.Length == 0)
+                    return;
+
+                var keys = callback.Where(a => a.completed).Select(a => a.id).ToList();
+                foreach (var key in achievementKeys)
+                {
+                    if(!keys.Contains(key))
+                        UnlockAchievement(key);
+                }
             });
         }
 
