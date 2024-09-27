@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Google.Play.Review;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -29,7 +30,7 @@ namespace HoakleEngine.Core.Services.PlayServices
 
         public void Synchronize(List<string> achievementKeys)
         {
-            throw new NotImplementedException("Synchronize not available to do in editor");
+
         }
 
         public void UnlockAchievement(string key)
@@ -95,11 +96,25 @@ namespace HoakleEngine.Core.Services.PlayServices
             Debug.LogError("DisplayLeaderboards not implemented in editor");
         }
 
+        private ReviewManager _ReviewManager;
+        private PlayReviewInfo _PlayReviewInfo;
         public Action OnReviewInfoReady { get; set; }
 
         public IEnumerator PrepareReview()
         {
-            yield return null;
+            Debug.LogError("Prepare Review - RequestReviewFlow");
+            if (_ReviewManager == null) _ReviewManager = new ReviewManager();
+
+            var requestFlowOperation = _ReviewManager.RequestReviewFlow();
+            yield return requestFlowOperation;
+            if (requestFlowOperation.Error != ReviewErrorCode.NoError)
+            {
+                OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) requestFlowOperation.Error , "Request Flow Operation Error: " + requestFlowOperation.Error));
+                yield break;
+            }
+
+            Debug.LogError("Prepare Review - GetResult");
+            _PlayReviewInfo = requestFlowOperation.GetResult();
             OnReviewInfoReady?.Invoke();
         }
 

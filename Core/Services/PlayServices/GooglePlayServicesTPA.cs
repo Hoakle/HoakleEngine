@@ -132,9 +132,7 @@ namespace HoakleEngine.Core.Services.PlayServices
         public Action OnReviewInfoReady { get; set; }
         public IEnumerator PrepareReview()
         {
-            Debug.LogError("Prepare Review - RequestReviewFlow");
             if (_ReviewManager == null) _ReviewManager = new ReviewManager();
-
             var requestFlowOperation = _ReviewManager.RequestReviewFlow();
             yield return requestFlowOperation;
             if (requestFlowOperation.Error != ReviewErrorCode.NoError)
@@ -142,8 +140,7 @@ namespace HoakleEngine.Core.Services.PlayServices
                 OnError?.Invoke(new PlayServicesError(PlayServicesErrorType.ReviewError, (int) requestFlowOperation.Error , "Request Flow Operation Error: " + requestFlowOperation.Error));
                 yield break;
             }
-
-            Debug.LogError("Prepare Review - GetResult");
+            
             _PlayReviewInfo = requestFlowOperation.GetResult();
             OnReviewInfoReady?.Invoke();
         }
@@ -153,10 +150,11 @@ namespace HoakleEngine.Core.Services.PlayServices
             Debug.LogError("LaunchReview - LaunchReviewFlow");
             var launchFlowOperation = _ReviewManager.LaunchReviewFlow(_PlayReviewInfo);
             yield return launchFlowOperation;
+            Debug.LogError("LaunchReview - launchFlowOperation = " + launchFlowOperation);
             _PlayReviewInfo = null;
             if (launchFlowOperation.Error != ReviewErrorCode.NoError)
             {
-                Debug.LogError("LaunchReview - DirectlyOpen");
+                Debug.LogError("LaunchReview - DirectlyOpen - Error = " + launchFlowOperation.Error);
                 DirectlyOpen();
             }
         }

@@ -8,6 +8,7 @@ namespace HoakleEngine.Core.Services.PlayServices
 {
     public interface IPlayServicesTP
     {
+        public void SetGameRoot(GameRoot gameRoot);
         public void Synchronize(List<string> achievementKeys);
         public void UnlockAchievement(string achievementKey);
         public void DisplayAchievements();
@@ -24,13 +25,12 @@ namespace HoakleEngine.Core.Services.PlayServices
     public class PlayServicesTP : ThirdPartyService, IPlayServicesTP
     {
         private IPlayServicesTPA _Actor;
+        private Coroutine _ReviewCoroutine;
         private GameRoot _GameRoot;
 
-        private Coroutine _ReviewCoroutine;
-        
-        [Inject]
-        public void Inject(GameRoot gameRoot)
+        public void SetGameRoot(GameRoot gameRoot)
             => _GameRoot = gameRoot;
+        
         public override void Initialize()
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
