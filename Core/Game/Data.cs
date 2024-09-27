@@ -1,7 +1,5 @@
 using System;
-using HoakleEngine.Core.Services;
 using HoakleEngine.Core.Services.GameSaveService;
-using UnityEngine;
 using Zenject;
 
 namespace HoakleEngine.Core.Game
@@ -35,8 +33,13 @@ namespace HoakleEngine.Core.Game
             {
                 _Data = _GameSaveService.Get<TData>(_Identifier);
             }
+            else
+            {
+                CreateData();
+            }
         }
 
+        protected abstract void CreateData();
         public virtual void Save()
         {
             _GameSaveService.Save(_Data, _Identifier);

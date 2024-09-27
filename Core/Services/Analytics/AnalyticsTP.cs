@@ -3,6 +3,7 @@ namespace HoakleEngine.Core.Services.Analytics
     public class AnalyticsTP : ThirdPartyService
     {
         private IAnalyticsTPA _AnalyticsTPA;
+        
         public override void Initialize()
         {
             _AnalyticsTPA = new AnalyticsTPA();

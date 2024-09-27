@@ -34,16 +34,16 @@ namespace HoakleEngine.Core.Game
         protected override void BuildData()
         {
             base.BuildData();
-            if (!_GameSaveService.Exist<SettingsData>(_Identifier))
-            {
-                _Data.HasMusic = true;
-                _Data.HasSfx = true;
-            }
-            
             _HasMusic.Value = _Data.HasMusic;
             _HasSfx.Value = _Data.HasSfx;
         }
 
+        protected override void CreateData()
+        {
+            _Data.HasMusic = true;
+            _Data.HasSfx = true;
+        }
+        
         public override void Save()
         {
             _Data.HasMusic = _HasMusic.Value;
