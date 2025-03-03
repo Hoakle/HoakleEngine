@@ -81,5 +81,9 @@ namespace HoakleEngine.Core.Communication
         Continue,
         GameModeChange,
         MainMenuLoaded,
+        Jump,
+        Slide,
+        NextLevel,
+        Retry
     }
 }
